@@ -4,14 +4,16 @@ using HappeningsDotNetC.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappeningsDotNetC.Database.Migrations
 {
     [DbContext(typeof(HappeningsContext))]
-    partial class HappeningsContextModelSnapshot : ModelSnapshot
+    [Migration("20181222043815_RoughDraftDBLayout")]
+    partial class RoughDraftDBLayout
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,9 +54,6 @@ namespace HappeningsDotNetC.Database.Migrations
 
                     b.Property<bool>("IsPrivate");
 
-                    b.Property<Guid?>("ReminderId")
-                        .IsRequired();
-
                     b.Property<int>("ReminderXMinsBefore");
 
                     b.Property<Guid>("UserId");
@@ -64,9 +63,6 @@ namespace HappeningsDotNetC.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HappeningId");
-
-                    b.HasIndex("ReminderId")
-                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -80,14 +76,15 @@ namespace HappeningsDotNetC.Database.Migrations
 
                     b.Property<DateTime>("HappeningTime");
 
-                    b.Property<Guid?>("HappeningUserId")
-                        .IsRequired();
+                    b.Property<Guid>("HappeningUserId");
 
                     b.Property<bool>("IsSilenced");
 
                     b.Property<DateTime>("StartRemindAt");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HappeningUserId");
 
                     b.ToTable("Reminders");
                 });
@@ -127,15 +124,18 @@ namespace HappeningsDotNetC.Database.Migrations
                         .HasForeignKey("HappeningId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("HappeningsDotNetC.Models.Reminder", "Reminder")
-                        .WithOne("HappeningUser")
-                        .HasForeignKey("HappeningsDotNetC.Models.JoinEntities.HappeningUser", "ReminderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("HappeningsDotNetC.Models.User", "User")
                         .WithMany("Happenings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("HappeningsDotNetC.Models.Reminder", b =>
+                {
+                    b.HasOne("HappeningsDotNetC.Models.JoinEntities.HappeningUser", "HappeningUser")
+                        .WithMany()
+                        .HasForeignKey("HappeningUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

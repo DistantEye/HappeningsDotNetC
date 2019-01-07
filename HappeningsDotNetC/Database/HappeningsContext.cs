@@ -1,5 +1,5 @@
-﻿using HappeningsDotNetC.Entities;
-using HappeningsDotNetC.Entities.JoinEntities;
+﻿using HappeningsDotNetC.Models;
+using HappeningsDotNetC.Models.JoinEntities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,14 +15,17 @@ namespace HappeningsDotNetC.Infrastructure
         { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Event> Event { get; set; }
+        public DbSet<Happening> Happenings { get; set; }
+        public DbSet<Reminder> Reminders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<EventUser>().HasOne(eu => eu.User).WithMany(u => u.Events).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<EventUser>().HasOne(eu => eu.Event).WithMany(e => e.AllUsers).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<HappeningUser>().HasOne(eu => eu.User).WithMany(u => u.Happenings).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<HappeningUser>().HasOne(eu => eu.Happening).WithMany(e => e.AllUsers).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<HappeningUser>().HasOne(eu => eu.Reminder).WithOne(r => r.HappeningUser).OnDelete(DeleteBehavior.Cascade);
         }
     }
 

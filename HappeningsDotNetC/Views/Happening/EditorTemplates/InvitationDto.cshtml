@@ -1,0 +1,38 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.InvitationDto
+@{ 
+    // patch selection setting because our Model field is the Text, not the Value. We handle byte/int setting in controller
+    var rsvpDropDownList = Html.GetEnumSelectList<HappeningsDotNetC.Models.RSVP>();
+    foreach(var item in rsvpDropDownList)
+    {
+        item.Value = item.Text;
+    }
+}
+
+<form asp-controller="Happening" asp-action="UpdateHappeningMember" method="post">
+    <div class="tableRow">
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.HappeningId)
+        @Html.HiddenFor(model => model.UserId)
+        @Html.HiddenFor(model => model.UserName)
+        @Html.HiddenFor(model => model.HappeningName)
+        @Html.HiddenFor(model => model.Date)
+        @Html.HiddenFor(model => model.ReminderXMinsBefore)
+        @Html.HiddenFor(model => model.IsPrivate)
+
+        <div class="tableCell bold">
+            @Model.UserName
+        </div>
+
+        <div class="tableCell">
+            @Html.DropDownListFor(model => model.Status, rsvpDropDownList)
+        </div>
+
+        <div class="tableCell">
+            <input type="submit" value="Update" />
+        </div>
+
+        <div class="tableCell">
+            <input type="submit" asp-action="RemoveHappeningMember" asp-controller="Happening" value="Remove" />
+        </div>
+    </div>
+ </form>

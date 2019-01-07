@@ -1,0 +1,13 @@
+﻿@model HappeningsDotNetC.Dtos.IntermediaryDtos.LoginDto
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<form asp-controller="Login" asp-action="Login" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
+
+    Login: @Html.EditorFor(model => model.UserName) <br />
+    Password: @Html.PasswordFor(model => model.Password) <br />
+    <button type="submit">Login</button>
+</form>
+
+<a asp-area="" asp-controller="Login" asp-action="Register">New User</a> <br />

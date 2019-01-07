@@ -1,0 +1,49 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.ReminderDto
+
+
+    <form asp-controller="Clock" asp-action="Update" method="post" class="tableRow">
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.HappeningId)
+
+        @Html.HiddenFor(model => model.HappeningName)
+        @Html.HiddenFor(model => model.HappeningTime)
+        @Html.HiddenFor(model => model.StartRemindAt)
+
+        <div class="tableCell">
+            @Model.HappeningName
+        </div>
+
+        <div class="tableCell">
+            @Model.HappeningTime.ToString("MMMM dd, yyyy hh:mm:ss")
+        </div>
+
+        <div class="tableCell">
+            @Model.StartRemindAt.ToString("MMMM dd, yyyy hh:mm:ss")
+        </div>
+
+        @if (!@Model.IsSilenced)
+        {
+            <input type="hidden" name="IsSilenced" value="true" />
+            <div class="tableCell">
+                Not Silenced
+            </div>
+
+            <div class="tableCell">
+                <input type="submit" value="Silence" />
+            </div>
+        }
+        else
+        {
+            <input type="hidden" name="IsSilenced" value="false" />
+
+            <div class="tableCell">
+                <input type="submit" value="Unsilence" />
+            </div>
+
+            <div class="tableCell">
+                Silenced
+            </div>
+
+        }
+
+    </form>

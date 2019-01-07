@@ -1,0 +1,67 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.InvitationDto
+@{
+    // patch selection setting because our Model field is the Text, not the Value. We handle byte/int setting in controller
+    var rsvpDropDownList = Html.GetEnumSelectList<HappeningsDotNetC.Models.RSVP>();
+    foreach (var item in rsvpDropDownList)
+    {
+        item.Value = item.Text;
+    }
+}
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if ((bool)ViewData["IsAdmin"])
+{
+    <a asp-area="" asp-controller="Happening" asp-action="Edit" asp-route-id="@Model.HappeningId">Edit Happening</a>
+    <br /><br />
+}
+
+<span class="bold">Name: </span> @ViewData["HappeningName"] <br />
+<span class="bold">Desc: </span> @ViewData["HappeningDesc"] <br /><br />
+
+<span class="bold">Organizer: </span> @ViewData["HappeningControllingUser"] <br />
+<span class="bold">Time: </span> @ViewData["HappeningStart"] to @ViewData["HappeningEnd"]
+
+@if (Model == null)
+{
+    <form asp-controller="Happening" asp-action="AddHappeningMember" method="post">
+        @Html.Hidden("HappeningId", ViewData["HappeningId"])
+        @Html.Hidden("UserId", ViewData["UserId"])
+        <input type="submit" value="Join Happening" />
+    </form>
+}
+else
+{
+    <form asp-controller="Happening" asp-action="UpdateHappeningMember" method="post">
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.HappeningId)
+        @Html.HiddenFor(model => model.HappeningName)
+        @Html.HiddenFor(model => model.Date)
+        @Html.HiddenFor(model => model.UserId)
+
+        <br />
+        <div class="bold">Manage Membership:</div>
+        <br />
+
+        @Html.DropDownListFor(model => model.Status, rsvpDropDownList)
+        Reminder @Html.EditorFor(model => model.ReminderXMinsBefore) Mins Before
+        <br />
+        <br />
+        Calendar Private? Yes @Html.RadioButtonFor(model => model.IsPrivate, true) No @Html.RadioButtonFor(model => model.IsPrivate, false)
+        <br />
+        <br />
+        <input type="submit" value="Update" />
+        <input type="submit" formaction="RemoveHappeningMember" value="Leave Happening" />
+
+    </form>
+}
+<br /><br />
+@if (@ViewData["Referer"] != null && !string.IsNullOrWhiteSpace((string)@ViewData["Referer"]))
+{
+    <a href="@ViewData["Referer"]">Return</a>
+}
+else
+{
+    <a asp-area="" asp-controller="Calendar" asp-action="Index">Return to Calendar</a>
+}

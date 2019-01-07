@@ -1,0 +1,12 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.UserDto
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<form asp-controller="Login" asp-action="Register" method="post">
+    @{ 
+        await Html.RenderPartialAsync("../Shared/EditorTemplates/UserDto.cshtml", Model);
+    }
+</form>
+
+<a asp-area="" asp-controller="Login" asp-action="Login">Return to Login</a>

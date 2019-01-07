@@ -1,0 +1,80 @@
+﻿@model IEnumerable<IEnumerable<HappeningsDotNetC.Dtos.EntityDtos.HappeningDto>>
+@{ 
+    int monthStartOffset = (int)ViewData["MonthStartOffset"];
+    int endOfWeekOffset = 7 - monthStartOffset;
+    // ex: if the first day of month was a sunday, offset is 0(Sunday), weeks end on 7th day of month and then 7 after that, etc
+    // if Tuesday, offset is 2(Tuesday), weeks end on 5th day of month and 7 days after that, etc
+}
+<!-- Want most of the display to still align normally, just not the calendar underneath -->
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+    <h3>@ViewData["Message"]</h3>
+
+    @if (ViewData["OtherUserName"] != null && !String.IsNullOrEmpty((string)ViewData["OtherUserName"]))
+    {
+        <span>Viewing as: @ViewData["OtherUserName"] </span> <a asp-area="" asp-controller="Calendar" asp-action="Index">(Cancel)</a><br/>
+    }
+
+    <a asp-area="" asp-controller="Calendar" asp-action="IndexListView">List View</a>
+
+
+    <form asp-controller="Calendar" asp-action="Index" method="get">
+        @Html.Hidden("UserId")
+        Start: @Html.Editor("StartDate", "DateTime", "StartDate")
+        End: @Html.Editor("EndDate", "DateTime", "EndDate")
+        <button type="submit">Change Date Range</button>
+    </form>
+
+    <br />
+</div>
+
+<div class="equalTable height80Per">
+    @{ 
+        bool weekOpen = false;
+    }
+    <div class="tableRow">
+
+        @for (int i = 0; i < monthStartOffset; i++)
+        { // we print blank leading rows for any days of the week from prev month
+        <div class="bigTableCell thickBorder">
+            <br />
+        </div>
+        }
+
+        @for (int i = 0; i < (int)ViewData["LastDayOfMonth"]; i++)
+        {
+            weekOpen = true;
+
+            var subList = Model.ElementAt(i);
+
+        <div class="bigTableCell thickBorder">
+            @(i+1)<br/>
+            @foreach (var dto in subList)
+            {
+                <a href="@Url.Action("View/"+dto.Id.ToString(),"Happening")">
+                    @dto.Name : @dto.StartTime.ToString("MMMM dd, yyyy hh:mm tt")
+                </a><br />
+            }
+
+        </div>
+
+            // control opening/closing tags for different weeks/rows
+            if (i != 0 && (i + 1 - endOfWeekOffset) % 7 == 0)
+            {
+                weekOpen = false;
+    @:</div>
+
+                // if we're not about to end the month we need a new row
+                if (i+1 < (int)ViewData["LastDayOfMonth"])
+                {
+    @:<div class="tableRow">
+                }
+            }
+        }
+
+@if (weekOpen)
+{
+    @:</div>
+}
+
+</div>

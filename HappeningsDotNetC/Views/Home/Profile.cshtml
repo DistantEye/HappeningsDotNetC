@@ -1,0 +1,10 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.UserDto
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<form asp-controller="Home" asp-action="UpdateProfile" method="post">
+    @{ 
+        await Html.RenderPartialAsync("../Shared/EditorTemplates/UserDto.cshtml", Model);
+    }
+</form>

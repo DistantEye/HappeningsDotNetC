@@ -1,0 +1,74 @@
+﻿@using HappeningsDotNetC.Dtos.EntityDtos
+@model IEnumerable<UserDto>
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<div class="baseTable">
+    <form asp-controller="Admin" asp-action="Update" method="post">
+
+        <div class="tableRow">
+            <div class="tableCell bold">
+                Login
+            </div>
+
+            <div class="tableCell bold">
+                Name
+            </div>
+
+            <div class="tableCell bold">
+                Password
+            </div>
+
+            <div class="tableCell bold">
+                Role
+            </div>
+
+            <div class="tableCell bold">
+                Public Calendar
+            </div>
+
+            <div class="tableCell">
+                <button type="submit">Update All</button>
+            </div>
+        </div>
+
+        @Html.EditorForModel()
+
+    </form>
+
+</div>
+
+<br /><hr /></br>
+
+<div class="baseTable">
+    <form asp-controller="Admin" asp-action="Create" method="post">
+        <div class="tableRow">
+            <div class="tableCell bold">
+                Login
+            </div>
+
+            <div class="tableCell bold">
+                Name
+            </div>
+
+            <div class="tableCell bold">
+                Password
+            </div>
+
+            <div class="tableCell bold">
+                Role
+            </div>
+
+            <div class="tableCell bold">
+                Public Calendar
+            </div>
+
+        </div>
+
+        @{
+            UserDto newDto = new UserDto();
+            await Html.RenderPartialAsync("EditorTemplates/UserDto.cshtml", newDto);
+        }
+    </form>
+</div>

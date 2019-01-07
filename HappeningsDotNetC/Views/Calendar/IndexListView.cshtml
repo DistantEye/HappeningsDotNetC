@@ -1,0 +1,50 @@
+﻿@model IEnumerable<HappeningsDotNetC.Dtos.EntityDtos.HappeningDto>
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<a asp-area="" asp-controller="Calendar" asp-action="Index">Calendar View</a>
+
+<form asp-controller="Calendar" asp-action="IndexListView" method="get">
+    Limit User: @Html.DropDownList("UserId", new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value", ViewData["UserId"]))
+    Start: @Html.Editor("StartDate", "DateTime", "StartDate")
+    End: @Html.Editor("EndDate", "DateTime", "EndDate")
+    <button type="submit">Filter</button>
+</form>
+
+<div class="slimTable">
+    <div class="tableRow bold">
+        <div class="tableCell">
+            Happening Name
+        </div>
+
+        <div class="tableCell">
+            Happening Start Time
+        </div>
+
+        <div class="tableCell">
+            RSVP Status
+        </div>
+        <div class="tableCell"></div>
+    </div>
+
+    @foreach (var dto in Model)
+    {
+        <div class="tableRow">
+            <div class="tableCell">
+                @dto.Name
+            </div>
+
+            <div class="tableCell">
+                @dto.StartTime
+            </div>
+
+            <div class="tableCell">
+                @dto.UserStatus
+            </div>
+            <div class="tableCell">
+                <button type="button" onclick="location.href='@Url.Action("View/"+dto.Id.ToString(),"Happening")'">View/Edit</button>
+            </div>
+        </div>
+    }
+</div>

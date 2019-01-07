@@ -4,14 +4,16 @@ using HappeningsDotNetC.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappeningsDotNetC.Database.Migrations
 {
     [DbContext(typeof(HappeningsContext))]
-    partial class HappeningsContextModelSnapshot : ModelSnapshot
+    [Migration("20181225035625_ReminderRevisions")]
+    partial class ReminderRevisions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

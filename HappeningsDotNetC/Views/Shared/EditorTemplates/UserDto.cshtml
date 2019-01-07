@@ -1,0 +1,17 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.UserDto
+
+@if (Model.Id != Guid.Empty)
+{
+    @Html.HiddenFor(model => model.Id)
+}
+@if (Model.Role != null && !String.IsNullOrEmpty(Model.Role))
+{
+    @Html.HiddenFor(model => model.Role)
+}
+
+
+    Login: @Html.EditorFor(model => model.Name) <br />
+    Name: @Html.EditorFor(model => model.FriendlyName) <br />
+    Password: @Html.PasswordFor(model => model.PasswordOrHash) <br />
+    Public Calendar? Yes @Html.RadioButtonFor(model => model.CalendarVisibleToOthers, true) No @Html.RadioButtonFor(model => model.CalendarVisibleToOthers, false) <br />
+    <button type="submit">Submit</button>

@@ -1,0 +1,61 @@
+﻿@model IEnumerable<HappeningsDotNetC.Dtos.EntityDtos.ReminderDto>
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if (!(bool)ViewData["IncludeSilenced"])
+{
+    <a asp-area="" asp-controller="Clock" asp-action="Index" asp-route-includeSilenced="true">Include Silenced</a>
+}
+else
+{
+    <a asp-area="" asp-controller="Clock" asp-action="Index">Exclude Silenced</a>
+}
+
+<br />
+<div class="rightContainer width200">
+    <p class="clock"></p>
+</div>
+
+<br />
+
+@if (Model.Count() > 0)
+{
+    <div class="slimTable">
+
+        <div class="tableRow">
+            <div class="tableCell bold">
+                Name
+            </div>
+
+            <div class="tableCell bold">
+                Start Time
+            </div>
+
+            <div class="tableCell bold">
+                Remind At
+            </div>
+        </div>
+
+        @foreach (var reminder in Model)
+        {
+            await Html.RenderPartialAsync("EditorTemplates/ReminderDto.cshtml", reminder);
+        }
+
+    </div>
+}
+else
+{
+    <h3>No reminders found</h3>
+}
+
+@section Scripts {
+    <script>
+        (function clockRefresh() {
+            var d = new Date();
+            var time = d.toLocaleTimeString();
+            $(".clock").html(time);
+            setTimeout(clockRefresh, 1000);
+        })();
+    </script>
+}

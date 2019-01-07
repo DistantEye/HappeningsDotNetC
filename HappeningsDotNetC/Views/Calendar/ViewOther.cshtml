@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "About";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<form asp-controller="Calendar" asp-action="Index" method="get">
+    View Calendar For: @Html.DropDownList("UserId", new SelectList((Dictionary<Guid,string>)ViewData["UserDropDown"], "Key", "Value"))
+    <input type="submit" value="View Calendar"/>
+    <input type="submit" formaction="IndexListView" value="ViewCalendarListView" />
+</form>

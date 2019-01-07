@@ -1,0 +1,40 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.InvitationDto
+@{ 
+    // patch selection setting because our Model field is the Text, not the Value. We handle byte/int setting in controller
+    var rsvpDropDownList = Html.GetEnumSelectList<HappeningsDotNetC.Models.RSVP>();
+    foreach (var item in rsvpDropDownList)
+    {
+        item.Value = item.Text;
+    }
+}
+<div class="tableRow">
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.HappeningId)
+    @Html.HiddenFor(model => model.UserId)
+    @Html.HiddenFor(model => model.Date)
+
+    <div class="tableCell">
+        @Html.EditorFor(model => model.HappeningName, new { htmlAttributes = new { @class = "from-control vAlignCenter", disabled = "disabled", @readonly = "readonly" } })
+    </div>
+
+    <div class="tableCell">
+        @Model.Date.ToString("MMMM dd, yyyy hh:mm tt")
+    </div>
+
+    <div class="tableCell">
+        @Html.DropDownListFor(model => model.Status, rsvpDropDownList)
+    </div>
+
+    <div class="tableCell">
+        Reminder @Html.EditorFor(model => model.ReminderXMinsBefore) Mins Before
+    </div>
+
+    <div class="tableCell">
+        Calendar Private? Yes @Html.RadioButtonFor(model => model.IsPrivate, true) No @Html.RadioButtonFor(model => model.IsPrivate, false)
+    </div>
+
+    <div class="tableCell">
+        <input type="submit" value="UpdateAll" />
+    </div>
+
+</div>

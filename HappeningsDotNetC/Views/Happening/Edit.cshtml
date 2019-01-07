@@ -1,0 +1,47 @@
+﻿@model HappeningsDotNetC.Dtos.EntityDtos.HappeningDto
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<form asp-controller="Happening" asp-action="Write" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
+    @Html.HiddenFor(model => model.Id)
+
+    Name: @Html.EditorFor(model => model.Name) <br />
+    Desc: @Html.EditorFor(model => model.Description) <br /><br />
+
+    Organizer: @Html.DropDownListFor(model => model.ControllingUserId, new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value")) <br />
+    Time: @Html.EditorFor(model => model.StartTime) to @Html.EditorFor(model => model.EndTime) <br />
+    Visibility: Public @Html.RadioButtonFor(model => model.IsPrivate, false) Private @Html.RadioButtonFor(model => model.IsPrivate, true) <br />
+    <button type="submit">@ViewData["PageVerb"] Happening</button>
+</form>
+
+@if ((string)ViewData["PageVerb"] == "Edit")
+{
+    // UserMembership only makes sense to show when Editting rather than when creating.
+    <h3>Users</h3>
+
+    <div class="slimTable">
+
+        @for (var i = 0; i < Model.AllUserInfo.Count(); i++)
+        {
+            var userElement = Model.AllUserInfo.ElementAt(i);
+            @Html.EditorFor(model => userElement, "InvitationDto");
+        }
+
+    </div>
+
+    <form asp-controller="Happening" asp-action="AddHappeningMember" method="post">
+        @Html.Hidden("HappeningId", Model.Id)
+        @Html.DropDownList("UserId", new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value"))
+        <button type="submit">Add User</button>
+    </form>
+}
+
+@if (@ViewData["Referer"] != null && !string.IsNullOrWhiteSpace((string)@ViewData["Referer"]))
+{
+    <a href="@ViewData["Referer"]">Return</a>
+}
+else
+{
+    <a asp-area="" asp-controller="Calendar" asp-action="Index">Return to Calendar</a>
+}

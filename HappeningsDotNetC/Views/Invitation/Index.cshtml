@@ -1,0 +1,46 @@
+﻿@model IEnumerable<HappeningsDotNetC.Dtos.EntityDtos.InvitationDto>
+
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if (!(bool)ViewData["IncludeResolved"])
+{
+    <a asp-area="" asp-controller="Invitation" asp-action="Index" asp-route-includeResolved="true">Include Already Answered</a>
+}
+else
+{
+    <a asp-area="" asp-controller="Invitation" asp-action="Index">Exclude Already Answered</a>
+}
+
+<br />
+
+@if (Model.Count() > 0)
+{
+    <form asp-controller="Invitation" asp-action="Update" method="post">
+
+        <div class="baseTable">
+            <div class="tableRow">
+                <div class="tableCell bold">
+                    Name
+                </div>
+
+                <div class="tableCell bold">
+                    Start Time
+                </div>
+
+                <div class="tableCell bold">
+                    Response
+                </div>
+            </div>
+
+
+            @Html.EditorForModel()
+        </div>
+
+    </form>
+}
+else
+{
+    <h3>No invitations found</h3>
+}

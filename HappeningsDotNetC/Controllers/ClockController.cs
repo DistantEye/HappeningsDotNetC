@@ -5,39 +5,50 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HappeningsDotNetC.Models;
+using HappeningsDotNetC.Dtos.EntityDtos;
+using HappeningsDotNetC.Interfaces.ServiceInterfaces;
 
 namespace HappeningsDotNetC.Controllers
 {
-    public class ClockController : Controller
+    public class ClockController : AppController<ReminderDto>
     {
-        public IActionResult Index()
+        public ClockController(ILoginService loginService, IApiService<ReminderDto> apiService, IApiService<ReminderDto> reminderServ) : base(loginService, apiService, reminderServ)
         {
-            return View();
         }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
+        // will need some kind of javascript periodic pull for the Index page to actually retrieve active reminders
 
-            return View();
+        [HttpGet]
+        public IActionResult Index(bool includeSilenced = false, bool showNotYetActive = false)
+        {
+            ViewData["Title"] = "Reminders";
+            ViewData["IncludeSilenced"] = includeSilenced;
+
+            IEnumerable<ReminderDto> userReminders = ApiGetData(includeSilenced, showNotYetActive);
+            return View(userReminders);
         }
 
-        public IActionResult Contact()
+        // for direct webapi grabs
+        [Route("/api/[controller]/getdata")]
+        public IEnumerable<ReminderDto> ApiGetData(bool includeSilenced = false, bool showNotYetActive = false)
         {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
+            return apiService.GetForUser(loginService.GetCurrentUserId()).Where(x => (includeSilenced || !x.IsSilenced) && (showNotYetActive || DateTime.Now >= x.StartRemindAt));
         }
 
-        public IActionResult Privacy()
+        // for direct webapi grabs
+        [Route("/api/[controller]/getcount")]
+        public int ApiCount(bool includeSilenced = false, bool showNotYetActive = false)
         {
-            return View();
+            return ApiGetData(includeSilenced, showNotYetActive).Count();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public IActionResult Update(ReminderDto toUpdate)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            // run Updates to service and then return back to normal index
+            ApiUpdate(toUpdate);
+            return new RedirectToActionResult("Index", "Clock", new { });
         }
+
     }
 }

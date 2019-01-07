@@ -1,6 +1,14 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
+
+
+
+html {
+    height: 100%;
+}
+
 body {
+    height: 100%;
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -8,6 +16,7 @@ body {
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
+    height: 100%;
     padding-left: 15px;
     padding-right: 15px;
 }
@@ -34,4 +43,92 @@ body {
     .carousel-caption {
         display: none;
     }
+}
+
+.baseTable {
+    display: table;
+}
+
+.equalTable {
+    display: table;
+    table-layout: fixed;
+}
+
+
+.slimTable {
+    display: table;
+    width: 60%;
+}
+
+.thickBorder {
+    border: 1px solid black;
+}
+
+.tableRow {
+    display: table-row;
+}
+
+.tableCell {
+    display: table-cell;
+    padding: 4px 4px 4px 4px;
+}
+
+.bigTableCell {
+    display: table-cell;
+    width: 2%;
+    height: 2%;
+    padding: 10px 10px 10px 10px;
+}
+
+.spacer {
+    font-size: 0;
+    height: 10px;
+    line-height: 0;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.redText {
+    color: red;
+}
+
+.width200 {
+    width: 200px;
+}
+
+.width80Per {
+    width: 80%;
+}
+
+.height80Per {
+    height: 80%;
+}
+
+.spreadAlign {
+    display: flex;
+    justify-content: space-around;
+}
+
+.rightContainer {    
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.leftContainer {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.clock {
+    color: black;
+    font-size: 32px;
+    font-weight: bold;    
+    border: 5px solid black;    
+    text-align: center;
+}
+
+vAlignCenter {
+    vertical-align: middle;
 }

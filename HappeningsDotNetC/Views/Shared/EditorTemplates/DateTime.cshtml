@@ -1,0 +1,58 @@
+﻿@model DateTime?
+@{
+    // there's a lot to do with unique Id spam to account for this still running smoothly when multiple components are on screen
+
+    var hiddenId = @Guid.NewGuid().ToString("N");
+    var dateId = @Guid.NewGuid().ToString("N");
+    var dateContainerId = @Guid.NewGuid().ToString("N");
+    var callBackId = @Guid.NewGuid().ToString("N");
+    var callBackFunctionName = "update" + callBackId + "();";
+
+    var htmlFieldName = Html.Name("");
+
+    // null out default value Dates
+    DateTime? modelVal = Model != ((DateTime?)default(DateTime)) ? Model : (DateTime?)null;
+}
+
+<input type="hidden" id="@hiddenId" name="@htmlFieldName" value="@modelVal">
+
+<span class="form-inline">
+    <span class='input-group date' id='@dateContainerId'>
+        <input type="text" id="@dateId" onchange="@callBackFunctionName" class="form-control">
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+    </span>
+</span>
+
+<script>
+    $(function () {
+        $("#@dateContainerId").datetimepicker();
+        var dateText = $("#@hiddenId").val();
+        var date = new Date(Date.parse(dateText));
+        
+        var dateStr = '';
+        if (date.toDateString() != "Invalid Date") {
+            dateStr = date.toLocaleString();
+        }
+        else if (dateText == '')
+        {
+            dateStr = dateText;
+        }
+
+
+        //var shortDate = date.toLocaleDateString();
+        //var shortTime = date.toLocaleTimeString();
+
+        $("#@dateId").val(dateStr);
+        $("#@dateContainerId").on('dp.change', function (e) { update@(callBackId)(); });
+    });
+
+    function update@(callBackId)() {
+        var date = new Date(Date.parse($("#@dateId").val()));
+
+        if (date.toDateString() != "Invalid Date") {
+            $("#@hiddenId").val(date.toLocaleString());
+        }
+    }
+</script>

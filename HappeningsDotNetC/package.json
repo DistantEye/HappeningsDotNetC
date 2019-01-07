@@ -1,0 +1,28 @@
+{
+  "name": "happeningsdotnetc",
+  "version": "1.0.0",
+  "description": "simple calendar sample site",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^3.4.0",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "jquery": "^3.3.1",
+    "jquery-validation": "^1.19.0",
+    "jquery-validation-unobtrusive": "^3.2.11",
+    "moment": "^2.23.0"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jshint": "^2.0.0",
+    "grunt-contrib-uglify": "^4.0.0",
+    "grunt-contrib-watch": "^1.1.0"
+  }
+}
