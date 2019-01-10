@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Services
 {
@@ -34,7 +35,7 @@ namespace HappeningsDotNetC.Services
             
             if (usersWithName.Count() > 0)
             {
-                throw new ArgumentException("Name already exists and must be unique: " + dto.Name);
+                throw new HandledException(new ArgumentException("Name already exists and must be unique: " + dto.Name));
             }
         }
 

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Services
 {
@@ -40,12 +41,12 @@ namespace HappeningsDotNetC.Services
 
         public override InvitationDto Create(InvitationDto dto, bool commitImmediately = true)
         {
-            throw new NotImplementedException("Direct creations of HappeningUsers are not allowed");
+            throw new HandledException(new NotImplementedException("Direct creations of HappeningUsers are not allowed"));
         }
 
         public override IEnumerable<InvitationDto> Create(IEnumerable<InvitationDto> dtos, bool commitImmediately = true)
         {
-            throw new NotImplementedException("Direct creations of HappeningUsers are not allowed");
+            throw new HandledException(new NotImplementedException("Direct creations of HappeningUsers are not allowed"));
         }
 
         // Entities can still be made via derived services

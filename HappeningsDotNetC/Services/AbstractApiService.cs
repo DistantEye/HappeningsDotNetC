@@ -1,4 +1,5 @@
-﻿using HappeningsDotNetC.Infrastructure;
+﻿using HappeningsDotNetC.Helpers;
+using HappeningsDotNetC.Infrastructure;
 using HappeningsDotNetC.Interfaces.EntityInterfaces;
 using HappeningsDotNetC.Interfaces.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,7 @@ namespace HappeningsDotNetC.Services
 
         public virtual IEnumerable<TDto> GetForUser(Guid id)
         {
-            throw new NotImplementedException("This service doesn't implement GetForUser");
+            throw new HandledException(new NotImplementedException("This service doesn't implement GetForUser"));
         }
 
         #region Encapsulate most DbSet access as the means of DatabaseAccess is a frequent refactoring target
@@ -75,7 +76,7 @@ namespace HappeningsDotNetC.Services
         {
             var entResult = GetEntOrDefault(id);
 
-            if (entResult == null) { throw new KeyNotFoundException(); }
+            if (entResult == null) { throw new HandledException(new KeyNotFoundException()); }
 
             return entResult;
         }

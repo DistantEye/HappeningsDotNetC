@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using HappeningsDotNetC.Helpers;
 using HappeningsDotNetC.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json.Linq;
 
 namespace HappeningsDotNetC
 {
@@ -58,16 +62,40 @@ namespace HappeningsDotNetC
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            app.UseWhen(x => x.Request.Path.Value.StartsWith("/api"), builder =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
+                builder.UseExceptionHandler(new ExceptionHandlerOptions()
+                {
+                    ExceptionHandler = async (context) =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        context.Response.ContentType = "application/json";
+                        var ex = context.Features.Get<IExceptionHandlerFeature>();
+                        if (ex != null)
+                        {
+                            context.Response.StatusCode = ErrorPackager.GetHttpCode(ex.Error);
+                            var err = new JObject();
+                            err.Add("message", JToken.FromObject(ex.Error.Message));
+                            await context.Response.WriteAsync(err.ToString()).ConfigureAwait(false);
+                        }
+                    }
+                });
+            });
+            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
             {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
+                if (env.IsDevelopment())
+                {
+                    builder.UseDeveloperExceptionPage();
+                }
+                else
+                {
 
+                    builder.UseExceptionHandler("/Home/Error");
+                    builder.UseHsts();
+                }
+            });
+
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();

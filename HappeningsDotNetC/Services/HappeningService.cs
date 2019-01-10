@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Services
 {
@@ -34,7 +35,7 @@ namespace HappeningsDotNetC.Services
             
             if (dto.ControllingUserId != currentUser.Id && currentUser.Role != UserRole.Admin)
             {
-                throw new ArgumentException("Non-admin users can only edit an happening if they are the owning user for that happening");
+                throw new HandledException(new ArgumentException("Non-admin users can only edit an happening if they are the owning user for that happening"));
             }
         }
 
@@ -61,7 +62,7 @@ namespace HappeningsDotNetC.Services
                 // without this, they'd just get 0 
                 if (!user.CalendarVisibleToOthers)
                 {
-                    throw new ArgumentException("Can't view calendar for user set to private");
+                    throw new HandledException(new ArgumentException("Can't view calendar for user set to private"));
                 }
             }
             
@@ -83,7 +84,7 @@ namespace HappeningsDotNetC.Services
                 // if Calendar mode, must have startDate/endDate set
                 if (filter.StartDate == null || filter.EndDate == null || filter.StartDate.Value.Month != filter.EndDate.Value.Month)
                 {
-                    throw new ArgumentException("Start and End Date filters must be set, and be within the same month, when textual display is false");
+                    throw new HandledException(new ArgumentException("Start and End Date filters must be set, and be within the same month, when textual display is false"));
                 }
 
                 int days = DateTime.DaysInMonth(filter.StartDate.Value.Year, filter.StartDate.Value.Month);                
@@ -150,7 +151,7 @@ namespace HappeningsDotNetC.Services
             {
                 if (loginService.GetCurrentUser().Role != UserRole.Admin)
                 {
-                    throw new ArgumentException("Can't request all membership data without admin rights");
+                    throw new HandledException(new ArgumentException("Can't request all membership data without admin rights"));
                 }
 
                 return joinService.Get();
@@ -161,7 +162,7 @@ namespace HappeningsDotNetC.Services
                 User currentUser = loginService.GetCurrentUser();
                 if (happening.IsPrivate && happening.ControllingUserId != currentUser.Id && currentUser.Role != UserRole.Admin)
                 {
-                    throw new ArgumentException("Can only view happening membership if it is non-private, the current user is the owner, or is an admin");
+                    throw new HandledException(new ArgumentException("Can only view happening membership if it is non-private, the current user is the owner, or is an admin"));
                 }
 
                 return joinService.GetQueryable().Where(x => x.HappeningId == happeningId).Select(x => joinService.DtoFromEntity(x));
@@ -174,17 +175,17 @@ namespace HappeningsDotNetC.Services
             Happening happening = GetEnt(happeningId);
 
             // make sure the user hasn't already been added 
-            if (joinService.GetEnt(userId, happeningId) != null) { throw new ArgumentException("Cannot add a user already added to event"); }
+            if (joinService.GetEnt(userId, happeningId) != null) { throw new HandledException(new ArgumentException("Cannot add a user already added to event")); }
 
             var userToAdd = userService.GetEntOrDefault(userId);
 
-            if (userToAdd == null) { throw new ArgumentException("Cannot add a user that doesn't exist"); }
+            if (userToAdd == null) { throw new HandledException(new ArgumentException("Cannot add a user that doesn't exist")); }
 
             // happening has to either be non-private, the logged in user doing the adding has to be the owner, or the logged in user has to be an admin
             User currentUser = loginService.GetCurrentUser();
             if (happening.IsPrivate && happening.ControllingUserId != currentUser.Id && currentUser.Role != UserRole.Admin)
             {
-                throw new ArgumentException("Can only add a user to a happening if it is non-private, the current user is the owner, or is an admin");
+                throw new HandledException(new ArgumentException("Can only add a user to a happening if it is non-private, the current user is the owner, or is an admin"));
             }
 
             InvitationDto result = new InvitationDto()
@@ -221,13 +222,13 @@ namespace HappeningsDotNetC.Services
             Happening happening = GetEnt(happeningId);
 
             HappeningUser joinEntity = joinService.GetEnt(userId, happeningId);
-            if (joinEntity == null) { throw new ArgumentException("Cannot remove a user that isn't attached to the event"); }
+            if (joinEntity == null) { throw new HandledException(new ArgumentException("Cannot remove a user that isn't attached to the event")); }
 
             // happening has to either be non-private, the logged in user doing the adding has to be the owner, or the logged in user has to be an admin
             User currentUser = loginService.GetCurrentUser();
             if (userId != currentUser.Id && happening.ControllingUserId != currentUser.Id && currentUser.Role != UserRole.Admin)
             {
-                throw new ArgumentException("Can only remove a user from happening if the current user is the one being removed, is the owner, or is an admin");
+                throw new HandledException(new ArgumentException("Can only remove a user from happening if the current user is the one being removed, is the owner, or is an admin"));
             }
 
 

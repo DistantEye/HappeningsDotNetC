@@ -12,6 +12,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Services
 {
@@ -130,7 +131,7 @@ namespace HappeningsDotNetC.Services
         {
             User currentUser = happeningsContext.Set<User>().SingleOrDefault(x => x.Name == userName);
 
-            if (currentUser == null) throw new KeyNotFoundException("Specified username does not exist in the database");
+            if (currentUser == null) throw new HandledException(new KeyNotFoundException("Specified username does not exist in the database"));
 
             return currentUser;
         }
