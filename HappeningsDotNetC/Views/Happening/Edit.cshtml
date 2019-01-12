@@ -1,4 +1,7 @@
 ﻿@model HappeningsDotNetC.Dtos.EntityDtos.HappeningDto
+@{ 
+    var userDropDownList = new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value");
+}
 
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
@@ -6,12 +9,38 @@
 <form asp-controller="Happening" asp-action="Write" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
     @Html.HiddenFor(model => model.Id)
 
-    Name: @Html.EditorFor(model => model.Name) <br />
-    Desc: @Html.EditorFor(model => model.Description) <br /><br />
+    <div class="slimTable">
+        <div class="tableRow">
+            <div class="tableCell">Name: </div>
+            <div class="tableCell">@Html.EditorFor(model => model.Name)</div>
+        </div>
 
-    Organizer: @Html.DropDownListFor(model => model.ControllingUserId, new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value")) <br />
-    Time: @Html.EditorFor(model => model.StartTime) to @Html.EditorFor(model => model.EndTime) <br />
-    Visibility: Public @Html.RadioButtonFor(model => model.IsPrivate, false) Private @Html.RadioButtonFor(model => model.IsPrivate, true) <br />
+        <div class="tableRow">
+            <div class="tableCell">Desc: </div>
+            <div class="tableCell">@Html.EditorFor(model => model.Description)</div>
+        </div>
+
+        <div class="tableRow">
+            <div class="tableCell">Organizer: </div>
+            <div class="tableCell"> @Html.DropDownListFor(model => model.ControllingUserId, userDropDownList)</div>
+        </div>
+
+        <div class="tableRow">
+            <div class="tableCell">Time: </div>
+            <div class="tableCell">@Html.EditorFor(model => model.StartTime) to @Html.EditorFor(model => model.EndTime) </div>
+        </div>
+
+        <div class="tableRow">
+            <div class="tableCell">Visibility: </div>
+            <div class="tableCell">Public @Html.RadioButtonFor(model => model.IsPrivate, false) Private @Html.RadioButtonFor(model => model.IsPrivate, true)</div>
+        </div>
+
+        <div class="tableRow">
+            <div class="tableCell"></div>
+            <div class="tableCell"></div>
+        </div>
+    </div>
+
     <button type="submit">@ViewData["PageVerb"] Happening</button>
 </form>
 
@@ -36,6 +65,8 @@
         <button type="submit">Add User</button>
     </form>
 }
+
+<br/><br/>
 
 @if (@ViewData["Referer"] != null && !string.IsNullOrWhiteSpace((string)@ViewData["Referer"]))
 {

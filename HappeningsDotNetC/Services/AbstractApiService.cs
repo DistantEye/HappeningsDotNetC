@@ -22,7 +22,8 @@ namespace HappeningsDotNetC.Services
 
         public AbstractApiService(HappeningsContext hc, ILoginService loginServ)
         {
-            // TODO : future proofing note : should check here whether hc.Set<TEnt>() properly executes            
+            // There is no gaurantee or check that HappeningsContext.Set<TEnt> will actually work
+            // later revisions may change this (or even go back to the respository pattern kicking and screaming, if need be)
             happeningsContext = hc;
             loginService = loginServ;
         }        

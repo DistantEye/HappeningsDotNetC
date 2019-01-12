@@ -9,9 +9,33 @@
     @Html.HiddenFor(model => model.Role)
 }
 
+<div class="width45Per">
+    <div class="slimTable">
 
-    Login: @Html.EditorFor(model => model.Name) <br />
-    Name: @Html.EditorFor(model => model.FriendlyName) <br />
-    Password: @Html.PasswordFor(model => model.PasswordOrHash) <br />
-    Public Calendar? Yes @Html.RadioButtonFor(model => model.CalendarVisibleToOthers, true) No @Html.RadioButtonFor(model => model.CalendarVisibleToOthers, false) <br />
+        <div class="tableRow">
+            <div class="tableCell">Login: </div>
+            <div class="tableCell">@Html.EditorFor(model => model.Name)</div>
+        </div>
+
+        <div class="tableRow">
+            <div class="tableCell">Name: </div>
+            <div class="tableCell">@Html.EditorFor(model => model.FriendlyName)</div>
+        </div>
+
+        <div class="tableRow">
+            <div class="tableCell">Password: </div>
+            <div class="tableCell">@Html.PasswordFor(model => model.PasswordOrHash)</div>
+        </div>
+
+        <div class="tableRow">
+            <div class="tableCell">Public Calendar? </div>
+            <div class="tableCell">
+                Yes @Html.RadioButtonFor(model => model.CalendarVisibleToOthers, true)
+                No @Html.RadioButtonFor(model => model.CalendarVisibleToOthers, false)
+            </div>
+        </div>
+
+    </div>
+
     <button type="submit">Submit</button>
+</div>

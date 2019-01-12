@@ -161,7 +161,8 @@ namespace HappeningsDotNetC.Controllers
         }
 
         // note only the MVC version needs the Bind prefix to workaround a .NET oddity with nesting Models, the API is fine without it
-        // TODO : make sure there isn't a more orderly fix to the above
+        // the better solution to this would to be using more javascript heavy forms and quite possibly straight ajax, but as per the readme,
+        // those solutions aren't desired to exist in the MVC version of the site
 
         [HttpPost]
         public IActionResult UpdateHappeningMember([Bind(Prefix = "userElement")] InvitationDto dto)

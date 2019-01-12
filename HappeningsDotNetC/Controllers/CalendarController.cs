@@ -8,6 +8,7 @@ using HappeningsDotNetC.Models;
 using HappeningsDotNetC.Dtos.EntityDtos;
 using HappeningsDotNetC.Interfaces.ServiceInterfaces;
 using HappeningsDotNetC.Dtos.IntermediaryDtos;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Controllers
 {
@@ -31,7 +32,11 @@ namespace HappeningsDotNetC.Controllers
         {
             Guid? filterUserId = userId ?? loginService.GetCurrentUserId();
 
-            
+            if (startDate != null && endDate != null && endDate.Value < startDate.Value)
+            {
+                throw new HandledException(new ArgumentException("EndDate cannot be before StartDate!"));
+            }
+
             CalendarSearchFilterDto searchFilter;
             
             if (isCalendarMode)
@@ -52,8 +57,8 @@ namespace HappeningsDotNetC.Controllers
                 {
                     TextualDisplay = true,
                     UserId = userId,  // list view allows for searching without a User Filter
-                    StartDate = startDate ?? DateTime.Now,
-                    EndDate = null // there's no point in saying 'endDate ?? null'
+                    StartDate = startDate, // there's no point in saying 'start/endDate ?? null'
+                    EndDate = endDate 
                 };
             }
             

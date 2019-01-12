@@ -12,6 +12,8 @@
     <button type="submit">Filter</button>
 </form>
 
+@if (Model != null && Model.Count() > 0)
+{
 <div class="slimTable">
     <div class="tableRow bold">
         <div class="tableCell">
@@ -43,8 +45,13 @@
                 @dto.UserStatus
             </div>
             <div class="tableCell">
-                <button type="button" onclick="location.href='@Url.Action("View/"+dto.Id.ToString(),"Happening")'">View/Edit</button>
+                <button type="button" onclick="location.href='@Url.Action("View/" + dto.Id.ToString(), "Happening")'">View/Edit</button>
             </div>
         </div>
     }
 </div>
+}
+else
+{
+    <p>No results found</p>
+}

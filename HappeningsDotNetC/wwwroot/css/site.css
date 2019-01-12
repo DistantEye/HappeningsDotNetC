@@ -98,8 +98,24 @@ body {
     width: 200px;
 }
 
+.width30Per {
+    width: 30%;
+}
+
+.width45Per {
+    width: 45%;
+}
+
+.width60Per {
+    width: 60%;
+}
+
 .width80Per {
     width: 80%;
+}
+
+.width90Per {
+    width: 90%;
 }
 
 .height80Per {
@@ -132,3 +148,4 @@ body {
 vAlignCenter {
     vertical-align: middle;
 }
+
