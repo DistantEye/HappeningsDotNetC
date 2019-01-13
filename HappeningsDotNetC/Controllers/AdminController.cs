@@ -77,7 +77,24 @@ namespace HappeningsDotNetC.Controllers
             }
 
             return new RedirectToActionResult("Index", "Admin", new { message = messages });
-        }        
+        }
+
+        public override UserDto ApiUpdate(UserDto dto)
+        {
+            CreatedLoginDto hashedPwdInfo = loginService.RegisterOrUpdate(new LoginDto() { UserName = dto.Name, Password = dto.PasswordOrHash });
+
+            return base.ApiUpdate(dto.CloneWithNewInfo(hashedPwdInfo));
+        }
+
+        public override IEnumerable<UserDto> ApiUpdate(IEnumerable<UserDto> dtos)
+        {
+            var hashedPwds = loginService.RegisterOrUpdate(dtos.Select(x => new LoginDto() { UserName = x.Name, Password = x.PasswordOrHash }))
+                                .ToDictionary(x => x.UserName, x => x);
+
+            var alteredSet = dtos.Select(x => x.CloneWithNewInfo(hashedPwds[x.Name]));
+
+            return base.ApiUpdate(alteredSet);
+        }
 
         public override UserDto ApiCreate(UserDto dto)
         {

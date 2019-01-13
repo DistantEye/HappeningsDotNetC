@@ -60,15 +60,18 @@ namespace HappeningsDotNetC.Services
 
                 // in all cases the filters will restrict private data from being shown, but an error is good feedback for a faulty case
                 // without this, they'd just get 0 
-                if (!user.CalendarVisibleToOthers)
+                if (!user.CalendarVisibleToOthers && currentUser.Role != UserRole.Admin)
                 {
                     throw new HandledException(new ArgumentException("Can't view calendar for user set to private"));
                 }
             }
-            
+
             IEnumerable<HappeningDto> data = GetQueryable().Where(x => (filter.UserId == null || (x.AllUsers.Select(y => y.UserId).Contains(filter.UserId.Value) 
-                                                                                                  && x.AllUsers.FirstOrDefault(y => filter.UserId.Value == y.UserId).User.CalendarVisibleToOthers)) &&
-                                                                           ((isCurrentUser || currentUser.Role == UserRole.Admin) || !x.IsPrivate)
+                                                                                                  && (x.AllUsers.FirstOrDefault(y => filter.UserId.Value == y.UserId).User.CalendarVisibleToOthers
+                                                                                                      || x.AllUsers.FirstOrDefault(y => filter.UserId.Value == y.UserId).User.Id == currentUser.Id
+                                                                                                      || currentUser.Role == UserRole.Admin)
+                                                                                                  ))
+                                                                           && ((isCurrentUser || currentUser.Role == UserRole.Admin) || !x.IsPrivate)
                                                                            && (filter.StartDate == null || x.StartTime >= filter.StartDate.Value)
                                                                            && (filter.EndDate == null || x.EndTime <= filter.EndDate.Value))
                                             .Select(x => DtoFromEntity(x));

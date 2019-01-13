@@ -66,14 +66,29 @@ namespace HappeningsDotNetC.Controllers
             return happeningService.Get(searchFilter);
         }
 
-        public IActionResult Index(Guid? userId = null, DateTime? startDate = null, DateTime? endDate = null)
+        public IActionResult Index(Guid? userId = null, DateTime? startDate = null, DateTime? endDate = null, int? offset = null)
         {
             ViewData["WideForm"] = true;
 
-            ViewData["Title"] = "Calendar";
+            
+            
 
             DateTime startDateFilter = startDate ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             DateTime endDateFilter = endDate ?? startDateFilter.AddMonths(1).AddDays(-1); // gets around figuring out what the last day of the month is
+
+            if (offset != null)
+            {
+                startDateFilter = startDateFilter.AddMonths(offset.Value);
+                endDateFilter = endDateFilter.AddMonths(offset.Value);
+
+                // redirect to avoid odd behavior with querystring
+                return new RedirectToActionResult("Index", "Calendar", new { UserId = userId, StartDate = startDateFilter, EndDate = endDateFilter });
+            }
+
+            string monthName = startDateFilter.ToString("MMMM");
+            ViewData["MonthName"] = monthName;
+            ViewData["Title"] = "Calendar - " + monthName;
+
 
             Guid currentUserId = loginService.GetCurrentUserId();
 

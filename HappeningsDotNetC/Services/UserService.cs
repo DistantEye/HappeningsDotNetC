@@ -73,7 +73,7 @@ namespace HappeningsDotNetC.Services
 
         protected override void UpdateEntity(User entity, UserDto dto)
         {
-            entity.Update(Enum.Parse<UserRole>(dto.Role, true), dto.Name, dto.FriendlyName, dto.CalendarVisibleToOthers);
+            entity.Update(Enum.Parse<UserRole>(dto.Role, true), dto.Name, dto.FriendlyName, dto.CalendarVisibleToOthers, dto.PasswordOrHash);
         }
     }
 }

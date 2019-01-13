@@ -8,14 +8,19 @@ using HappeningsDotNetC.Models;
 using HappeningsDotNetC.Interfaces.ServiceInterfaces;
 using HappeningsDotNetC.Dtos.EntityDtos;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using HappeningsDotNetC.Helpers;
+using HappeningsDotNetC.Dtos.IntermediaryDtos;
 
 namespace HappeningsDotNetC.Controllers
 {
     public class HomeController : AppController<UserDto>
     {
+        private IApiService<InvitationDto> membershipService;
 
-        public HomeController(ILoginService loginService, IApiService<UserDto> apiService, IApiService<ReminderDto> reminderServ) : base(loginService, apiService, reminderServ)
+        public HomeController(ILoginService loginService, IApiService<UserDto> apiService, 
+                            IApiService<ReminderDto> reminderServ, IApiService<InvitationDto> joinService) : base(loginService, apiService, reminderServ)
         {
+            membershipService = joinService;
         }
 
 
@@ -58,6 +63,55 @@ namespace HappeningsDotNetC.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        // special override for ApiUpdate to bake in the password changing parts 
+        public override UserDto ApiUpdate(UserDto dto)
+        {
+            if (String.IsNullOrEmpty(dto.PasswordOrHash))
+            {
+                return base.ApiUpdate(dto); // if no password is being changed we don't have to go through the extra stuff below
+            }
+
+            CreatedLoginDto hashedPwdInfo = loginService.RegisterOrUpdate(new LoginDto() { UserName = dto.Name, Password = dto.PasswordOrHash });
+
+            return base.ApiUpdate(dto.CloneWithNewInfo(hashedPwdInfo));
+        }
+
+        // override aspects this endpoint shouldn't be able to act on
+
+        public override UserDto ApiCreate(UserDto dto)
+        {
+            throw new HandledException(new NotImplementedException("Cannot create new users from this endpoint"));
+        }
+
+        public override IEnumerable<UserDto> ApiCreate(IEnumerable<UserDto> dtos)
+        {
+            throw new HandledException(new NotImplementedException("Cannot create new users from this endpoint"));
+        }
+
+        public override IActionResult ApiDelete(Guid id)
+        {
+            if (id != loginService.GetCurrentUserId())
+            {
+                throw new HandledException(new NotImplementedException("Cannot delete other users from this endpoint"));
+            }
+            else
+            {
+                var memberships = membershipService.GetForUser(id).Select(x => x.Id);
+                membershipService.Delete(memberships, false);
+                return base.ApiDelete(id);
+            }
+        }
+
+        public override IActionResult ApiDelete(IEnumerable<Guid> ids)
+        {
+            throw new HandledException(new NotImplementedException("Cannot mass delete users from this endpoint"));
+        }
+
+        public override IEnumerable<UserDto> ApiUpdate(IEnumerable<UserDto> dtos)
+        {
+            throw new HandledException(new NotImplementedException("Cannot mass update users from this endpoint"));
         }
     }
 }

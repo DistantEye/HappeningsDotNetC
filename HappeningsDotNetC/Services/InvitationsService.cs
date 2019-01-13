@@ -90,7 +90,8 @@ namespace HappeningsDotNetC.Services
                 ReminderXMinsBefore = entity.ReminderXMinsBefore,
                 Status = entity.UserStatus.ToString(),
                 UserId = entity.UserId,       
-                UserName = entity.User != null ? entity.User.FriendlyName : ""
+                UserName = entity.User != null ? entity.User.FriendlyName : "",
+                IsPrivate = entity.IsPrivate
             };
         }
         

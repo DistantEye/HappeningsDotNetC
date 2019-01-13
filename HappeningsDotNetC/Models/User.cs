@@ -41,7 +41,7 @@ namespace HappeningsDotNetC.Models
             FriendlyName = friendlyName;
             CalendarVisibleToOthers = calendarVisibleToOthers;
 
-            if (hash != null) Hash = hash;
+            if (!String.IsNullOrEmpty(hash)) Hash = hash;
         }
     }
 

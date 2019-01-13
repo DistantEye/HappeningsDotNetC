@@ -152,17 +152,17 @@ namespace HappeningsDotNetC.Controllers
             return new RedirectToActionResult("Edit", "Happening", new { id = dto.HappeningId});
         }
 
+        // note only the MVC version needs the Bind prefix to workaround a .NET oddity with nesting Models, the API is fine without it
+        // the better solution to this would to be using more javascript heavy forms and quite possibly straight ajax, but as per the readme,
+        // those solutions aren't desired to exist in the MVC version of the site
+
         [HttpPost]
         public IActionResult RemoveHappeningMember([Bind(Prefix = "UserElement")] HappeningMembershipDto dto)
         {
             ApiRemoveHappeningMember(dto);
 
             return new RedirectToActionResult("Edit", "Happening", new { id = dto.HappeningId });
-        }
-
-        // note only the MVC version needs the Bind prefix to workaround a .NET oddity with nesting Models, the API is fine without it
-        // the better solution to this would to be using more javascript heavy forms and quite possibly straight ajax, but as per the readme,
-        // those solutions aren't desired to exist in the MVC version of the site
+        }        
 
         [HttpPost]
         public IActionResult UpdateHappeningMember([Bind(Prefix = "userElement")] InvitationDto dto)
@@ -170,6 +170,20 @@ namespace HappeningsDotNetC.Controllers
             ApiUpdateHappeningMember(dto);
 
             return new RedirectToActionResult("Edit", "Happening", new { id = dto.HappeningId });
+        }
+
+        // to make matters worse, sometimes we need to use the version without the bind so there has to be a differently named action that pipes into the first set
+
+        [HttpPost]
+        public IActionResult RemoveHappeningMemberNB(HappeningMembershipDto dto)
+        {
+            return RemoveHappeningMember(dto);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateHappeningMemberNB(InvitationDto dto)
+        {
+            return UpdateHappeningMember(dto);
         }
 
         [HttpPost("/api/[controller]/addhappeningmember")]

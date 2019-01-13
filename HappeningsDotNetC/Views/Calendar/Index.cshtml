@@ -15,14 +15,17 @@
         <span>Viewing as: @ViewData["OtherUserName"] </span> <a asp-area="" asp-controller="Calendar" asp-action="Index">(Cancel)</a><br/>
     }
 
-    <a asp-area="" asp-controller="Calendar" asp-action="IndexListView">List View</a>
+    <a asp-area="" asp-controller="Calendar" asp-action="IndexListView" asp-route-userId="@ViewData["UserId"]">List View</a>
 
 
     <form asp-controller="Calendar" asp-action="Index" method="get">
         @Html.Hidden("UserId")
+        @Html.Hidden("Offset", "")
         Start: @Html.Editor("StartDate", "DateTime", "StartDate")
         End: @Html.Editor("EndDate", "DateTime", "EndDate")
-        <button type="submit">Change Date Range</button>
+        <button type="submit">Change Date Range</button><br />
+        <input type="submit" onclick="document.getElementById('Offset').value = -1;" value="Previous Month" />
+        <input type="submit" onclick="document.getElementById('Offset').value = 1" value="Next Month" />
     </form>
 
     <br />
@@ -59,7 +62,7 @@
         </div>
 
             // control opening/closing tags for different weeks/rows
-            if (i != 0 && (i + 1 - endOfWeekOffset) % 7 == 0)
+            if ((i + 1 - endOfWeekOffset) % 7 == 0)
             {
                 weekOpen = false;
     @:</div>
