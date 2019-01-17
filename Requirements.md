@@ -17,17 +17,17 @@ Single Page App/Pseudo SPA
 
 ### Main Feature Needs
 
-  * Calendar => Usually the logged in user. View a Monthly Calander that displays events, presumably repeating if they extend across days. Option to change months. Can click on events to Event View
+  * Calendar => Usually the logged in user. View a Monthly Calander that displays happenings, presumably repeating if they extend across days. Option to change months. Can click on happenings to Happening View
   * Login => Need some kind of login page to throw people to first
-  * Event Create => Through menu button or proper click action on slots in the calendar : Create some thing on the calander with various settings
-  * Event Administration Page => Edit form of Create, with also options 
-  * Clock => Mostly a menubar widget but also clickable to acknowledge upcoming alarms/events so it removes the "impending thing" icon on the clock bar
-  * Event View => Users can see events they're in (or have been invited to) and read necessary info, manage their status, etc
-  * Invitations Page => Although the Calendar/Event View page also gives options for this, a more table/list version of things so people can quick manage stuff. 
+  * Happening Create => Through menu button or proper click action on slots in the calendar : Create some thing on the calander with various settings
+  * Happening Administration Page => Edit form of Create, with also options 
+  * Clock => Mostly a menubar widget but also clickable to acknowledge upcoming alarms/happenings so it removes the "impending thing" icon on the clock bar
+  * Happening View => Users can see happenings they're in (or have been invited to) and read necessary info, manage their status, etc
+  * Invitations Page => Although the Calendar/Happening View page also gives options for this, a more table/list version of things so people can quick manage stuff. 
     * This should have some kind of number display in the top bar so people know if they have still pending invitations
     * The page should only list invitations that haven't been responded to
   * View Other User's Calanders => Table/List/Search Page to try and look at another user's calendar. 
-    * Some users deny anyone being able to look at all. Anyone else can override the default visibility options for an event to hide or show it against normal settings
+    * Some users deny anyone being able to look at all. Anyone else can override the default visibility options for an happening to hide or show it against normal settings
   * Admin
     * Admins need some way to manage users/reset passwords, etc
 
@@ -35,10 +35,10 @@ Single Page App/Pseudo SPA
 
 These are either the direct database elements or other supporting elements for the app's data structure.
 
-  * Event => Particular date/time, description, primary user, secondary users, list of user RVSP status, visibility info*, reminder settings (we use some kind of app global thing that can annoy you with a modal)
+  * Happening => Particular date/time, description, primary user, secondary users, list of user RVSP status, visibility info*, reminder settings (we use some kind of app global thing that can annoy you with a modal)
     * visibility info determines the default visibility setting for if someone can see it on someone else's calendar calendar
-    * There will need to be an EventsToUsers table DB implementationwise, and that will contain also fields for the RVSP status, as well as any User visibility overrides for their status on the event
-  * Invitations should not exist as a specific object, they can be parsed by seeing what Events a user has and whether they've responded or not
+    * There will need to be an HappeningsToUsers table DB implementationwise, and that will contain also fields for the RVSP status, as well as any User visibility overrides for their status on the happening
+  * Invitations should not exist as a specific object, they can be parsed by seeing what Happenings a user has and whether they've responded or not
     * (Post-work note : requirement rejected for EF Core implementations since the mapping table has to be explicit anyways)
   * RSVP status is hardcoded as as far as "NoResponse", "Yes", "No", "Maybe"
   * Users => Normal/Admin Status, User name, friendly name, calendar visible to others flag
@@ -53,7 +53,7 @@ These are either the direct database elements or other supporting elements for t
 	
   * Top Menu Bar
     * Unless otherwise specified , top menu bar should always be visible
-    * Menu bar should consist of links to: Home(Calendar), Event Create, Pending Invitations, View Other Calendars, Logout
+    * Menu bar should consist of links to: Home(Calendar), Happening Create, Pending Invitations, View Other Calendars, Logout
     * Pending Invitations and Clock may have relevant number prefixes to show pending reminders/invitations
     * If in "View Other" mode, there should be an extra [] note with the Friendly Name of the User Being Viewed, with an X box for canceling out the view other mode		
 
@@ -62,49 +62,49 @@ These are either the direct database elements or other supporting elements for t
     * The top of the page should include options for changing the Month/Year setting to some time other than present
     * Next to the date controls should be a toggle for 'List View' (see below set)
     * Suggested visual style is the traditional black lines on white box calendar
-    * Events should appear in boxes as appropriate to what day they are on, with Event Name and Time fitting as best visually appropriate
-    * If some events take place over multiple days, the event should appear in all relevant day boxes
-    * If multiple events take place in one day they should appear in the box according to start time order
-    * If multiday events overlap the start time ordering should still persist across successive date boxes (this will give visibility priority to older multiday events)
-    * Each event row should have some form of clickable means to navigate to View/Edit Event Information in full
+    * Happenings should appear in boxes as appropriate to what day they are on, with Happening Name and Time fitting as best visually appropriate
+    * If some happenings take place over multiple days, the happening should appear in all relevant day boxes
+    * If multiple happenings take place in one day they should appear in the box according to start time order
+    * If multiday happenings overlap the start time ordering should still persist across successive date boxes (this will give visibility priority to older multiday happenings)
+    * Each happening row should have some form of clickable means to navigate to View/Edit Happening Information in full
 	
   * Calendar List View
     * Similar to above, the top page should have a toggle for 'Calendar View'
-    * Instead of Month/Year controls, there should be options to filter the Event lists to a certain start and end date range
+    * Instead of Month/Year controls, there should be options to filter the Happening lists to a certain start and end date range
     * Default Filter should be start day as present date, no ending date
-    * This page, if unfiltered, shall show every Event the User has in chronological order, obeying filters otherwise
-    * Events should be presented in a psuedo tabular form with columns Event Name, Event Date, Event RVSP status	
-    * Each event row should have some form of clickable means to navigate to View/Edit Event Information in full
+    * This page, if unfiltered, shall show every Happening the User has in chronological order, obeying filters otherwise
+    * Happenings should be presented in a psuedo tabular form with columns Happening Name, Happening Date, Happening RVSP status	
+    * Each happening row should have some form of clickable means to navigate to View/Edit Happening Information in full
 
-  * Event Create
-    * Aside from visual indicators of the page being Create rather than edit, this should be requirements indentical to a black version of Event Administration (editting)
+  * Happening Create
+    * Aside from visual indicators of the page being Create rather than edit, this should be requirements indentical to a black version of Happening Administration (editting)
 
-  * Event Administration
+  * Happening Administration
     * Should include text/date fields for setting the following information : date/time, name, description, primary user, secondary users, list of user RVSP status***, visibility info***, reminder settings***
       * RVSP Status is a dropdown for "NoResponse", "Yes", "No", "Maybe"
       * visibility info determines the default visibility setting for if someone can see it on someone else's calendar calendar and whether new users can join
         * Options should be Public, Hidden, Closed. Hidden can be openly joined but won't be visible by default			
-      * reminder settings is when to create a clock alert for the event
-      * Some of these settings are obviously local user specific, and are not required if for some reason the administrative user is not a member of the event		
-    * Event Name and Event Date are required fields
-    * All availible preexisting information for the event should fill fields as appropriate
-    * At the bottom of the page (or as a subpage/modal) there should be a User control option for removing users already attached to the event
+      * reminder settings is when to create a clock alert for the happening
+      * Some of these settings are obviously local user specific, and are not required if for some reason the administrative user is not a member of the happening		
+    * Happening Name and Happening Date are required fields
+    * All availible preexisting information for the happening should fill fields as appropriate
+    * At the bottom of the page (or as a subpage/modal) there should be a User control option for removing users already attached to the happening
     * Should also be a control for inviting users
 
   * Clock
     * When navigating to the clock page there should be a simple headerless table showing active alarms, and an option to dismiss them
 
-  * Event View
-    * Note : if user has administrative rights over the event being viewed, this page should redirect to Event Administration
-    * If not administrative rights, the appearance of the page should be similar to Event Administration, but with no invite/user management controls, and most fields beyond RVSP status, visibility info, and reminder settings forced to read only
-    * If the event isn't a Closed event, there should be an option to join the event if not a member of it already
+  * Happening View
+    * Note : if user has administrative rights over the happening being viewed, this page should redirect to Happening Administration
+    * If not administrative rights, the appearance of the page should be similar to Happening Administration, but with no invite/user management controls, and most fields beyond RVSP status, visibility info, and reminder settings forced to read only
+    * If the happening isn't a Closed happening, there should be an option to join the happening if not a member of it already
 		
   * Invitations Page
-    * Should be a simple headerless table showing Event Name, Date, and a dropdown to change RVSP status
+    * Should be a simple headerless table showing Happening Name, Date, and a dropdown to change RVSP status
     * Depending on UX implementation, either changing the dropdown triggers an auto submit, or there's an explicit submit changes button
-    * Only events where RSVP is "NoResponse" should be listed and changing off that status removes them from the page's list
+    * Only happenings where RSVP is "NoResponse" should be listed and changing off that status removes them from the page's list
 
   * View Other Calendar Page
     * Both versions of this page (the calendar and list form) should function identically to those pages except with a session tag (or equivalent) to override which user to fetch information for
     * The backend will handle the presence of that tag and the necessary restraining behaviors (visibility settings should be respected/checked closer, no edits should be possible)
-    * Going to any page beyond the Calendar/List View pages should drop the user back to their own user context, preventing improper modifications from being made
+    * Going to any page beyond the Calendar/List View pages should drop the user back to their own user context, prhappeninging improper modifications from being made
