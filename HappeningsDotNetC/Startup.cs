@@ -40,6 +40,7 @@ namespace HappeningsDotNetC
                                     options.LogoutPath = "/Login/Logout";
 
                                 });
+            services.AddCors();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddSessionStateTempDataProvider();
@@ -101,6 +102,12 @@ namespace HappeningsDotNetC
             app.UseAuthentication();
             app.UseCookiePolicy();
             app.UseSession();
+
+            app.UseCors(builder => builder
+                                    .AllowAnyOrigin()
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader()
+                                    .AllowCredentials());
 
             app.UseMvc(routes =>
             {

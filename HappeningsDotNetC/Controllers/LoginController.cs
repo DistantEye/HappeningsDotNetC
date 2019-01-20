@@ -88,7 +88,7 @@ namespace HappeningsDotNetC.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("/api/[controller]/login")]
         public async Task<bool> ApiLogin(LoginDto loginDto)
         {
 
@@ -96,7 +96,7 @@ namespace HappeningsDotNetC.Controllers
             
         }
 
-        [HttpGet]
+        [HttpGet("/api/[controller]/logout")]
         public IActionResult ApiLogout()
         {
             loginService.Logout();
@@ -104,7 +104,18 @@ namespace HappeningsDotNetC.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet("/api/[controller]/getCurrentUser")]
+        public UserDto ApiGetCurrentUser()
+        {
+            var currentUser = loginService.GetCurrentUser();
+
+            if (currentUser == null) { return null; }
+
+            return userService.Get(currentUser.Id);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("/api/[controller]/register")]
         public UserDto ApiRegister(UserDto userInfo)
         {
             // if no users, the first one made is always admin

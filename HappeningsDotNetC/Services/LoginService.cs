@@ -118,7 +118,7 @@ namespace HappeningsDotNetC.Services
         {
             ClaimsPrincipal current = httpAccess.HttpContext.User;
 
-            if (current == null) return null;
+            if (current == null || !current.Identity.IsAuthenticated) return null;
 
             string userName = current.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name.ToString()).Value;
 
