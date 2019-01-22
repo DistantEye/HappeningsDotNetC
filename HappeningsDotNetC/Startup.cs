@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using HappeningsDotNetC.Helpers;
 using HappeningsDotNetC.Infrastructure;
+using HappeningsDotNetC.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -63,6 +64,13 @@ namespace HappeningsDotNetC
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCors(builder => builder
+                                    .AllowAnyOrigin() // in production this should be configured to only target the intended frontend site
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader()
+                                    .AllowCredentials());
+            app.UseMiddleware<MaintainCorsHeadersMiddleware>();
+
             app.UseWhen(x => x.Request.Path.Value.StartsWith("/api"), builder =>
             {
                 builder.UseExceptionHandler(new ExceptionHandlerOptions()
@@ -101,13 +109,7 @@ namespace HappeningsDotNetC
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseCookiePolicy();
-            app.UseSession();
-
-            app.UseCors(builder => builder
-                                    .AllowAnyOrigin()
-                                    .AllowAnyMethod()
-                                    .AllowAnyHeader()
-                                    .AllowCredentials());
+            app.UseSession();            
 
             app.UseMvc(routes =>
             {

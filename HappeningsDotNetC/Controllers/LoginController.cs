@@ -9,6 +9,7 @@ using HappeningsDotNetC.Dtos.EntityDtos;
 using HappeningsDotNetC.Dtos.IntermediaryDtos;
 using HappeningsDotNetC.Interfaces.ServiceInterfaces;
 using Microsoft.AspNetCore.Authorization;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Controllers
 {
@@ -89,10 +90,23 @@ namespace HappeningsDotNetC.Controllers
 
         [AllowAnonymous]
         [HttpPost("/api/[controller]/login")]
-        public async Task<bool> ApiLogin(LoginDto loginDto)
+        public async Task<bool> ApiLogin([FromBody] LoginDto loginDto)
         {
-
-            return await loginService.Login(loginDto);
+            try
+            {
+                return await loginService.Login(loginDto);
+            }
+            catch (HandledException e)
+            {
+                if (e.InnerException is KeyNotFoundException)
+                {
+                    return false; // we want to hide "user not found" errors
+                }
+                else
+                {
+                    throw e;
+                }
+            }
             
         }
 
@@ -116,7 +130,7 @@ namespace HappeningsDotNetC.Controllers
 
         [AllowAnonymous]
         [HttpPost("/api/[controller]/register")]
-        public UserDto ApiRegister(UserDto userInfo)
+        public UserDto ApiRegister([FromBody] UserDto userInfo)
         {
             // if no users, the first one made is always admin
             if (userService.Get().Count() == 0)

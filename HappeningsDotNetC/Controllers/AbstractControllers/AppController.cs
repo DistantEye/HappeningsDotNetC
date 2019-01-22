@@ -49,13 +49,13 @@ namespace HappeningsDotNetC.Controllers
         }
 
         [HttpPost("/api/[controller]/")]
-        public virtual TDto ApiCreate(TDto dto)
+        public virtual TDto ApiCreate([FromBody] TDto dto)
         {
             return apiService.Create(dto);
         }
 
         [HttpPut("/api/[controller]/")]
-        public virtual TDto ApiUpdate(TDto dto)
+        public virtual TDto ApiUpdate([FromBody] TDto dto)
         {
             return apiService.Update(dto);
         }
@@ -68,19 +68,19 @@ namespace HappeningsDotNetC.Controllers
         }
 
         [HttpPost("/api/[controller]/")]
-        public virtual IEnumerable<TDto> ApiCreate(IEnumerable<TDto> dtos)
+        public virtual IEnumerable<TDto> ApiCreate([FromBody] IEnumerable<TDto> dtos)
         {
             return apiService.Create(dtos);
         }
 
         [HttpPut("/api/[controller]/")]
-        public virtual IEnumerable<TDto> ApiUpdate(IEnumerable<TDto> dtos)
+        public virtual IEnumerable<TDto> ApiUpdate([FromBody] IEnumerable<TDto> dtos)
         {
             return apiService.Update(dtos);
         }
 
-        [HttpDelete("/api/[controller]/delete/{id}")]
-        public virtual IActionResult ApiDelete(IEnumerable<Guid> ids)
+        [HttpPost("/api/[controller]/delete/{id}")]
+        public virtual IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
         {
             apiService.Delete(ids);
             return Ok();

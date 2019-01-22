@@ -187,13 +187,13 @@ namespace HappeningsDotNetC.Controllers
         }
 
         [HttpPost("/api/[controller]/addhappeningmember")]
-        public HappeningDto ApiAddHappeningMember(HappeningMembershipDto dto)
+        public HappeningDto ApiAddHappeningMember([FromBody] HappeningMembershipDto dto)
         {
             return happeningService.AddUser(dto.HappeningId, dto.UserId);
         }
 
         [HttpPost("/api/[controller]/addhappeningmember")]
-        public IActionResult ApiRemoveHappeningMember(HappeningMembershipDto dto)
+        public IActionResult ApiRemoveHappeningMember([FromBody] HappeningMembershipDto dto)
         {
             happeningService.RemoveUser(dto.HappeningId, dto.UserId);
 
@@ -201,7 +201,7 @@ namespace HappeningsDotNetC.Controllers
         }
 
         [HttpPost("/api/[controller]/updatehappeningmember")]
-        public InvitationDto ApiUpdateHappeningMember(InvitationDto dto)
+        public InvitationDto ApiUpdateHappeningMember([FromBody] InvitationDto dto)
         {
             return invitationService.Update(dto);
         }
