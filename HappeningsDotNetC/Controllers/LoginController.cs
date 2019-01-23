@@ -76,7 +76,7 @@ namespace HappeningsDotNetC.Controllers
 
             try
             {
-                ApiRegister(userInfo);
+                await ApiRegister(userInfo);
             }
             catch(ArgumentException ae)
             {
@@ -130,7 +130,7 @@ namespace HappeningsDotNetC.Controllers
 
         [AllowAnonymous]
         [HttpPost("/api/[controller]/register")]
-        public UserDto ApiRegister([FromBody] UserDto userInfo)
+        public async Task<UserDto> ApiRegister([FromBody] UserDto userInfo)
         {
             // if no users, the first one made is always admin
             if (userService.Get().Count() == 0)
@@ -149,7 +149,16 @@ namespace HappeningsDotNetC.Controllers
             };
             CreatedLoginDto preregisterInfo = loginService.RegisterOrUpdate(smallerDto); // this is just hashing the password and should always succeed
 
-            return userService.Create(userInfo.CloneWithNewInfo(preregisterInfo));
+            var result = userService.Create(userInfo.CloneWithNewInfo(preregisterInfo)); 
+
+            // register implies Login(user) if no one is currently logged in
+
+            if (ApiGetCurrentUser() == null)
+            {
+                await ApiLogin(smallerDto);
+            }
+
+            return result;
 
         }
 
