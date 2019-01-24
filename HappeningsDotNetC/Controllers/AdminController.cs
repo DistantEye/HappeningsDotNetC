@@ -18,7 +18,7 @@ namespace HappeningsDotNetC.Controllers
     {
         private IApiService<InvitationDto> membershipService;
 
-        public AdminController(ILoginService loginService, IApiService<UserDto> apiService, 
+        public AdminController(ILoginService loginService, IApiService<UserDto> apiService,
                                 IApiService<ReminderDto> reminderServ, IApiService<InvitationDto> joinService) : base(loginService, apiService, reminderServ)
         {
             membershipService = joinService;
@@ -56,7 +56,7 @@ namespace HappeningsDotNetC.Controllers
             {
                 var errors = ModelState.Where(x => x.Value.ValidationState == ModelValidationState.Invalid).SelectMany(x => x.Key + ": " + String.Join(", ", x.Value.Errors));
                 messages = String.Join("; ", errors);
-            }            
+            }
 
             return new RedirectToActionResult("Index", "Admin", new { message = messages });
         }
@@ -79,31 +79,36 @@ namespace HappeningsDotNetC.Controllers
             return new RedirectToActionResult("Index", "Admin", new { message = messages });
         }
 
-        public override UserDto ApiUpdate(UserDto dto)
+        public override UserDto ApiUpdate([FromBody] UserDto dto)
         {
+            if (dto.PasswordOrHash == null || dto.PasswordOrHash.Trim().Length == 0)
+            {
+                return base.ApiUpdate(dto); // we can't do this as easily for mass, but we can shortcut here to avoid hashing non-password relevant updates
+            }
+
             CreatedLoginDto hashedPwdInfo = loginService.RegisterOrUpdate(new LoginDto() { UserName = dto.Name, Password = dto.PasswordOrHash });
 
             return base.ApiUpdate(dto.CloneWithNewInfo(hashedPwdInfo));
         }
 
-        public override IEnumerable<UserDto> ApiUpdate(IEnumerable<UserDto> dtos)
+        public override IEnumerable<UserDto> ApiUpdate([FromBody] IEnumerable<UserDto> dtos)
         {
             var hashedPwds = loginService.RegisterOrUpdate(dtos.Select(x => new LoginDto() { UserName = x.Name, Password = x.PasswordOrHash }))
                                 .ToDictionary(x => x.UserName, x => x);
 
-            var alteredSet = dtos.Select(x => x.CloneWithNewInfo(hashedPwds[x.Name]));
+            var alteredSet = dtos.Select(x => (x.PasswordOrHash == null || x.PasswordOrHash.Trim().Length == 0) ? x : x.CloneWithNewInfo(hashedPwds[x.Name]));
 
             return base.ApiUpdate(alteredSet);
         }
 
-        public override UserDto ApiCreate(UserDto dto)
+        public override UserDto ApiCreate([FromBody] UserDto dto)
         {
             CreatedLoginDto hashedPwdInfo = loginService.RegisterOrUpdate(new LoginDto() { UserName = dto.Name, Password = dto.PasswordOrHash });
 
             return base.ApiCreate(dto.CloneWithNewInfo(hashedPwdInfo));
         }
 
-        public override IEnumerable<UserDto> ApiCreate(IEnumerable<UserDto> dtos)
+        public override IEnumerable<UserDto> ApiCreate([FromBody] IEnumerable<UserDto> dtos)
         {
             var hashedPwds = loginService.RegisterOrUpdate(dtos.Select(x => new LoginDto() { UserName = x.Name, Password = x.PasswordOrHash }))
                                 .ToDictionary(x => x.UserName, x => x);
@@ -121,7 +126,7 @@ namespace HappeningsDotNetC.Controllers
             return base.ApiDelete(id);
         }
 
-        public override IActionResult ApiDelete(IEnumerable<Guid> ids)
+        public override IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
         {
             foreach(Guid id in ids)
             {

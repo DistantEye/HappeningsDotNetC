@@ -30,19 +30,19 @@ namespace HappeningsDotNetC.Controllers
         }
 
         // a series of methods to make basic WebApi access also functional
-        [Route("/api/[controller]/")]
+        [HttpGet("/api/[controller]/")]
         public virtual IEnumerable<TDto> ApiGet()
         {
             return apiService.Get();
         }
 
-        [Route("/api/[controller]/getforuser/{id?}")]
+        [HttpGet("/api/[controller]/getforuser/{id?}")]
         public virtual IEnumerable<TDto> ApiGetForUser(Guid id)
         {
             return apiService.GetForUser(id);
         }
 
-        [Route("/api/[controller]/{id?}")]
+        [HttpGet("/api/[controller]/{id?}")]
         public virtual TDto ApiGet(Guid id)
         {
             return apiService.Get(id);
@@ -67,19 +67,19 @@ namespace HappeningsDotNetC.Controllers
             return Ok();
         }
 
-        [HttpPost("/api/[controller]/")]
+        [HttpPost("/api/[controller]/mass")]
         public virtual IEnumerable<TDto> ApiCreate([FromBody] IEnumerable<TDto> dtos)
         {
             return apiService.Create(dtos);
         }
 
-        [HttpPut("/api/[controller]/")]
+        [HttpPut("/api/[controller]/mass")]
         public virtual IEnumerable<TDto> ApiUpdate([FromBody] IEnumerable<TDto> dtos)
         {
             return apiService.Update(dtos);
         }
 
-        [HttpPost("/api/[controller]/delete/{id}")]
+        [HttpPost("/api/[controller]/massDelete/{id}")]
         public virtual IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
         {
             apiService.Delete(ids);
