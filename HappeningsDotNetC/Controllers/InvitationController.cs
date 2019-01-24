@@ -45,5 +45,11 @@ namespace HappeningsDotNetC.Controllers
                                                                                                     && !x.Status.Equals("No", StringComparison.InvariantCultureIgnoreCase)));
         }
 
+        [HttpGet("/api/[controller]/getuserinvitations/{happeningId}")]
+        public virtual InvitationDto ApiGetInvitationForCurrent(Guid happeningId)
+        {
+            return ApiGetForUser(loginService.GetCurrentUserId()).SingleOrDefault(x => x.HappeningId == happeningId);
+        }
+
     }
 }

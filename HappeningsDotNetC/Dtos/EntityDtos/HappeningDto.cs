@@ -27,6 +27,10 @@ namespace HappeningsDotNetC.Dtos.EntityDtos
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<Guid> AllUsers { get; set; }
 
+        // Ignore if null - optionally can pull the current user's invitation (if it exists)
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public InvitationDto CurrentUserInfo { get; set; }
+
         // Ignore if null - this is a more expensive grab only done on demand
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<InvitationDto> AllUserInfo { get; set; }

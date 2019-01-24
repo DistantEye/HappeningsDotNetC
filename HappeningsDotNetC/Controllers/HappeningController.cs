@@ -29,13 +29,14 @@ namespace HappeningsDotNetC.Controllers
 
         public IActionResult View(Guid id)
         {
-            ViewData["Title"] = "View Happening";            
-
-            HappeningDto happening = ApiGet(id);
+            ViewData["Title"] = "View Happening";
 
             var currentUser = loginService.GetCurrentUser();
 
-            if (currentUser.Role == UserRole.Admin || happening.ControllingUserId == currentUser.Id)
+            InvitationDto data = happeningService.GetHappeningMembership(id).SingleOrDefault(x => x.UserId == currentUser.Id);
+            
+
+            if (currentUser.Role == UserRole.Admin || data.HappeningControllingUserId == currentUser.Id)
             {
                 ViewData["IsAdmin"] = true;                
             }
@@ -44,16 +45,16 @@ namespace HappeningsDotNetC.Controllers
                 ViewData["IsAdmin"] = false;
             }
 
-            InvitationDto data = happeningService.GetHappeningMembership(id).SingleOrDefault(x => x.UserId == currentUser.Id);
+            
 
             // get what little Happening data we need to the View
-            ViewData["HappeningName"]              = happening.Name;
-            ViewData["HappeningDesc"]              = happening.Description;
-            ViewData["HappeningControllingUser"]   = happening.ControllingUser;
-            ViewData["HappeningStart"]             = happening.StartTime;
-            ViewData["HappeningEnd"]               = happening.EndTime;
+            ViewData["HappeningName"]              = data.HappeningName;
+            ViewData["HappeningDesc"]              = data.HappeningDesc;
+            ViewData["HappeningControllingUser"]   = data.HappeningControllingUser;
+            ViewData["HappeningStart"]             = data.Date;
+            ViewData["HappeningEnd"]               = data.EndDate;
 
-            ViewData["HappeningId"] = happening.Id;
+            ViewData["HappeningId"] = data.HappeningId;
             ViewData["UserId"] = loginService.GetCurrentUserId();
 
             // While View is related in design to edit it won't share the same view since the submit target is different and many fields are readonly
@@ -192,7 +193,7 @@ namespace HappeningsDotNetC.Controllers
             return happeningService.AddUser(dto.HappeningId, dto.UserId);
         }
 
-        [HttpPost("/api/[controller]/addhappeningmember")]
+        [HttpPost("/api/[controller]/removehappeningmember")]
         public IActionResult ApiRemoveHappeningMember([FromBody] HappeningMembershipDto dto)
         {
             happeningService.RemoveUser(dto.HappeningId, dto.UserId);
@@ -204,6 +205,16 @@ namespace HappeningsDotNetC.Controllers
         public InvitationDto ApiUpdateHappeningMember([FromBody] InvitationDto dto)
         {
             return invitationService.Update(dto);
+        }
+
+        [HttpGet("/api/[controller]/getWithCurrUser/{id}")]
+        public HappeningDto ApiGetWithCurrUser(Guid id)
+        {
+            var result = ApiGet(id);
+
+            result.CurrentUserInfo = invitationService.GetForUser(loginService.GetCurrentUserId()).SingleOrDefault(x => x.HappeningId == id);
+
+            return result;
         }
     }
 }

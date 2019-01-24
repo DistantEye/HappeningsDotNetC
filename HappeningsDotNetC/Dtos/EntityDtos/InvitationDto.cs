@@ -18,5 +18,11 @@ namespace HappeningsDotNetC.Dtos.EntityDtos
         public int ReminderXMinsBefore { get; set; }
         public bool IsPrivate { get; set; }
 
+        // extra happening fields to save on lookups
+        public string HappeningDesc { get; set; }
+        public string HappeningControllingUser { get; set; }
+        public Guid HappeningControllingUserId { get; set; }
+        public DateTime EndDate { get; set; }
+
     }
 }

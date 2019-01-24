@@ -36,7 +36,7 @@ else
     <form asp-controller="Happening" asp-action="UpdateHappeningMemberNB" method="post">
         @{ 
             // dev note, the below use of manual hidden field is because of a weird bug with the model binder prioritizing the Id field
-            // from QueryString over the Id field in model. While ugly, this slution might be a way around that problem occuring elsewhere too
+            // from QueryString over the Id field in model. While ugly, this solution might be a way around that problem occuring elsewhere too
         }
         <input type="hidden" id="Id" name="Id" value="@Model.Id">
         @Html.HiddenFor(model => model.HappeningId)

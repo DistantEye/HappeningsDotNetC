@@ -25,7 +25,7 @@ namespace HappeningsDotNetC.Services
         public override IQueryable<HappeningUser> GetQueryable()
         {
             return base.GetQueryable()
-                        .Include(x => x.Happening)
+                        .Include(x => x.Happening).ThenInclude(x => x.ControllingUser)
                         .Include(x => x.User);
         }
 
@@ -91,7 +91,11 @@ namespace HappeningsDotNetC.Services
                 Status = entity.UserStatus.ToString(),
                 UserId = entity.UserId,       
                 UserName = entity.User != null ? entity.User.FriendlyName : "",
-                IsPrivate = entity.IsPrivate
+                IsPrivate = entity.IsPrivate,
+                HappeningDesc = entity.Happening.Description,
+                EndDate = entity.Happening.EndTime,
+                HappeningControllingUser = entity.Happening.ControllingUser.Name,
+                HappeningControllingUserId = entity.Happening.ControllingUserId
             };
         }
         

@@ -66,7 +66,7 @@ namespace HappeningsDotNetC.Controllers
         }
 
         // special override for ApiUpdate to bake in the password changing parts 
-        public override UserDto ApiUpdate(UserDto dto)
+        public override UserDto ApiUpdate([FromBody] UserDto dto)
         {
             if (String.IsNullOrEmpty(dto.PasswordOrHash))
             {
@@ -80,12 +80,12 @@ namespace HappeningsDotNetC.Controllers
 
         // override aspects this endpoint shouldn't be able to act on
 
-        public override UserDto ApiCreate(UserDto dto)
+        public override UserDto ApiCreate([FromBody] UserDto dto)
         {
             throw new HandledException(new NotImplementedException("Cannot create new users from this endpoint"));
         }
 
-        public override IEnumerable<UserDto> ApiCreate(IEnumerable<UserDto> dtos)
+        public override IEnumerable<UserDto> ApiCreate([FromBody] IEnumerable<UserDto> dtos)
         {
             throw new HandledException(new NotImplementedException("Cannot create new users from this endpoint"));
         }
@@ -104,12 +104,12 @@ namespace HappeningsDotNetC.Controllers
             }
         }
 
-        public override IActionResult ApiDelete(IEnumerable<Guid> ids)
+        public override IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
         {
             throw new HandledException(new NotImplementedException("Cannot mass delete users from this endpoint"));
         }
 
-        public override IEnumerable<UserDto> ApiUpdate(IEnumerable<UserDto> dtos)
+        public override IEnumerable<UserDto> ApiUpdate([FromBody] IEnumerable<UserDto> dtos)
         {
             throw new HandledException(new NotImplementedException("Cannot mass update users from this endpoint"));
         }
