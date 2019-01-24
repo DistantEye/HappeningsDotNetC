@@ -37,5 +37,13 @@ namespace HappeningsDotNetC.Controllers
             return new RedirectToActionResult("Index", "Invitation", new { });
         }
 
+        [HttpGet("/api/[controller]/getuserinvitations/")]
+        public virtual IEnumerable<InvitationDto> ApiGetUserInvitations(bool includeResolved = false)
+        {
+            return ApiGetForUser(loginService.GetCurrentUserId()).Where(x => includeResolved ||
+                                                                                                (!x.Status.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)
+                                                                                                    && !x.Status.Equals("No", StringComparison.InvariantCultureIgnoreCase)));
+        }
+
     }
 }
