@@ -51,5 +51,11 @@ namespace HappeningsDotNetC.Controllers
             return ApiGetForUser(loginService.GetCurrentUserId()).SingleOrDefault(x => x.HappeningId == happeningId);
         }
 
+        [HttpGet("/api/[controller]/getalluserinvitations/")]
+        public virtual IEnumerable<InvitationDto> ApiGetInvitations(Guid happeningId)
+        {
+            return ApiGetForUser(loginService.GetCurrentUserId());
+        }
+
     }
 }

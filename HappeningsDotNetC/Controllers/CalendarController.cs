@@ -27,8 +27,8 @@ namespace HappeningsDotNetC.Controllers
         
         // also move Entity folder to Model folder for standardization?
 
-        [Route("/api/[controller]/")]
-        public IEnumerable<IEnumerable<HappeningDto>> ApiGet(bool isCalendarMode, Guid? userId = null, DateTime? startDate = null, DateTime? endDate = null)
+        [Route("/api/[controller]/getFiltered")]
+        public IEnumerable<IEnumerable<HappeningDto>> ApiGetFiltered(bool isCalendarMode, Guid? userId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             Guid? filterUserId = userId ?? loginService.GetCurrentUserId();
 
@@ -110,7 +110,7 @@ namespace HappeningsDotNetC.Controllers
             IEnumerable<IEnumerable<HappeningDto>> data;
             try
             {
-                data = ApiGet(true, userId, startDateFilter, endDateFilter);
+                data = ApiGetFiltered(true, userId, startDateFilter, endDateFilter);
             }
             catch(ArgumentException ae)
             {
@@ -139,7 +139,7 @@ namespace HappeningsDotNetC.Controllers
 
             try
             {
-                data = ApiGet(false, userId, startDate, endDate);
+                data = ApiGetFiltered(false, userId, startDate, endDate);
             }
             catch (ArgumentException ae)
             {

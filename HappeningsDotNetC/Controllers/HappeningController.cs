@@ -74,7 +74,7 @@ namespace HappeningsDotNetC.Controllers
             ViewData["Title"] = "Create Happening";
 
             ViewData["PageVerb"] = "Create";
-            ViewData["UserDropDown"] = happeningService.GetUserDictionary();
+            ViewData["UserDropDown"] = ApiGetPossibleUsers();
 
             HappeningDto data = TempData.Peek("HappeningFormData") != null ? (HappeningDto)JsonConvert.DeserializeObject((string)TempData["HappeningFormData"]) : new HappeningDto();
 
@@ -93,7 +93,7 @@ namespace HappeningsDotNetC.Controllers
             ViewData["Title"] = "Edit Happening";
 
             ViewData["PageVerb"] = "Edit";
-            ViewData["UserDropDown"] = happeningService.GetUserDictionary();
+            ViewData["UserDropDown"] = ApiGetPossibleUsers();
 
             HappeningDto data = TempData.Peek("HappeningFormData") != null ? (HappeningDto)JsonConvert.DeserializeObject((string)TempData["HappeningFormData"]) : ApiGet(id);
             data.AllUserInfo = happeningService.GetHappeningMembership(data.Id);
@@ -216,5 +216,21 @@ namespace HappeningsDotNetC.Controllers
 
             return result;
         }
+
+        [HttpGet("/api/[controller]/getUserList")]
+        public Dictionary<Guid, string> ApiGetPossibleUsers()
+        {
+            return happeningService.GetUserDictionary();
+        }
+
+        [HttpGet("/api/[controller]/getWithData/{id}")]
+        public HappeningDto ApiGetWithData(Guid id)
+        {
+            var result = ApiGet(id);
+            result.AllUserInfo = happeningService.GetHappeningMembership(id);
+
+            return result;
+        }
+
     }
 }
