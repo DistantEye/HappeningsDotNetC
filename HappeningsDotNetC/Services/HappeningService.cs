@@ -73,8 +73,8 @@ namespace HappeningsDotNetC.Services
                                                                                                   ))
                                                                            && ((isCurrentUser || currentUser.Role == UserRole.Admin) || !x.IsPrivate)
                                                                            && (filter.StartDate == null || x.StartTime >= filter.StartDate.Value)
-                                                                           && (filter.EndDate == null || x.EndTime <= filter.EndDate.Value))
-                                            .Select(x => DtoFromEntity(x)).OrderBy(x => x.StartTime);
+                                                                           && (filter.EndDate == null || x.EndTime <= filter.EndDate.Value)).OrderBy(x => x.StartTime)
+                                            .Select(x => DtoFromEntity(x));
 
             if (filter.TextualDisplay)
             {
