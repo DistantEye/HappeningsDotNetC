@@ -60,7 +60,7 @@ namespace HappeningsDotNetC.Controllers
             return apiService.Update(dto);
         }
       
-        [HttpDelete("/api/[controller]/delete/{id}")]
+        [HttpDelete("/api/[controller]/{id}")]
         public virtual IActionResult ApiDelete(Guid id)
         {
             apiService.Delete(id);

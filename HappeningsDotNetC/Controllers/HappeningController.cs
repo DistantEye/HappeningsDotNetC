@@ -33,6 +33,7 @@ namespace HappeningsDotNetC.Controllers
 
             var currentUser = loginService.GetCurrentUser();
 
+            HappeningDto happening = ApiGet(id);
             InvitationDto data = happeningService.GetHappeningMembership(id).SingleOrDefault(x => x.UserId == currentUser.Id);
             
 
@@ -45,16 +46,16 @@ namespace HappeningsDotNetC.Controllers
                 ViewData["IsAdmin"] = false;
             }
 
-            
+
 
             // get what little Happening data we need to the View
-            ViewData["HappeningName"]              = data.HappeningName;
-            ViewData["HappeningDesc"]              = data.HappeningDesc;
-            ViewData["HappeningControllingUser"]   = data.HappeningControllingUser;
-            ViewData["HappeningStart"]             = data.Date;
-            ViewData["HappeningEnd"]               = data.EndDate;
+            ViewData["HappeningName"] = happening.Name;
+            ViewData["HappeningDesc"] = happening.Description;
+            ViewData["HappeningControllingUser"] = happening.ControllingUser;
+            ViewData["HappeningStart"] = happening.StartTime;
+            ViewData["HappeningEnd"] = happening.EndTime;
 
-            ViewData["HappeningId"] = data.HappeningId;
+            ViewData["HappeningId"] = happening.Id;
             ViewData["UserId"] = loginService.GetCurrentUserId();
 
             // While View is related in design to edit it won't share the same view since the submit target is different and many fields are readonly
@@ -230,6 +231,22 @@ namespace HappeningsDotNetC.Controllers
             result.AllUserInfo = happeningService.GetHappeningMembership(id);
 
             return result;
+        }
+
+        public override IActionResult ApiDelete(Guid id)
+        {
+            // clear out any existing memberships
+            var invitationIds = happeningService.GetHappeningMembership(id).Select(x => x.Id);
+            invitationService.Delete(invitationIds, false);
+            return base.ApiDelete(id);
+        }
+
+        public override IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
+        {
+            // clear out any existing memberships
+            var invitationIds = ids.SelectMany(y => happeningService.GetHappeningMembership(y).Select(x => x.Id));
+            invitationService.Delete(invitationIds, false);
+            return base.ApiDelete(ids);
         }
 
     }

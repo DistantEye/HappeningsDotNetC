@@ -13,7 +13,7 @@
 
 @if ((bool)ViewData["IsAdmin"])
 {
-    <a asp-area="" asp-controller="Happening" asp-action="Edit" asp-route-id="@Model.HappeningId">Edit Happening</a>
+    <a asp-area="" asp-controller="Happening" asp-action="Edit" asp-route-id="@ViewData["HappeningId"]">Edit Happening</a>
     <br /><br />
 }
 
