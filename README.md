@@ -1,6 +1,6 @@
 ﻿# Happenings App
 
-
+This project demonstrates a basic event/scheduling app suitable for personal or organizational use. It is setup for both direct hosting use as well as being able to function as an backend API to another site.
 
 ## Requirements
 
