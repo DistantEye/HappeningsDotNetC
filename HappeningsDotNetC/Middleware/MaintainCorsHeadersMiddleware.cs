@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 
 // Workaround for https://github.com/aspnet/AspNetCore/issues/2378
-// Credit to Patrick Szalapski https://stackoverflow.com/a/49902362/2934891
+// Credit to Patrick Szalapski https://stackoverflow.com/questions/49900141/asp-net-core-cors-request-blocked-why-doesnt-my-api-apply-the-right-headers/49902362#49902362
 namespace HappeningsDotNetC.Middleware
 {
     /// <summary>

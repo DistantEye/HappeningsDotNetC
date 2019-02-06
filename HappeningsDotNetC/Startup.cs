@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -47,11 +46,6 @@ namespace HappeningsDotNetC
                 .AddSessionStateTempDataProvider();
 
             services.AddSession();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            });
 
             DependencyInjectionMappings.Map(services); // Handles all registrations            
 
@@ -107,7 +101,7 @@ namespace HappeningsDotNetC
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseAuthentication();
+            app.UseAuthentication(); 
             app.UseCookiePolicy();
             app.UseSession();            
 
