@@ -52,9 +52,16 @@ namespace HappeningsDotNetC.Services
         #region Encapsulate most DbSet access as the means of DatabaseAccess is a frequent refactoring target
 
         // this gets overridden by children with any extra includes as needed
-        public virtual IQueryable<TEnt> GetQueryable()
+        public virtual IQueryable<TEnt> GetQueryable(bool local = false)
         {
-            return happeningsContext.Set<TEnt>();
+            if (local)
+            {
+                return happeningsContext.Set<TEnt>().Local.AsQueryable();
+            }
+            else
+            {
+                return happeningsContext.Set<TEnt>();
+            }
         }
 
         public virtual void DeleteEnt(TEnt ent)
@@ -97,21 +104,27 @@ namespace HappeningsDotNetC.Services
 
         #endregion        
 
-        public virtual TDto Create(TDto dto, bool commitImmediately = true)
+        protected TDto CreateCore(TDto dto, bool commitImmediately = true, bool skipValidation = false)
         {
-            PreCreate(dto);
+            // validation skipping provides for cases where validation is done elsewhere. External consumers can't disable this
+            if (!skipValidation) PreCreate(dto);
 
             TEnt newEnt = CreateEntity(dto);
             AddEnt(newEnt);
 
             if (commitImmediately)
             {
-                SaveChanges();                
+                SaveChanges();
             }
 
-            PostCreate(newEnt);
+            if (!skipValidation) PostCreate(newEnt);
 
             return DtoFromEntity(newEnt);
+        }
+
+        public virtual TDto Create(TDto dto, bool commitImmediately = true)
+        {
+            return CreateCore(dto, commitImmediately);            
         }
 
         public virtual IEnumerable<TDto> Create(IEnumerable<TDto> dtos, bool commitImmediately = true)
@@ -142,14 +155,15 @@ namespace HappeningsDotNetC.Services
             return DtoFromEntity(foundEntity);
         }
 
-        public TDto Update(TDto dto, bool commitImmediately = true)
+        protected TDto UpdateCore(TDto dto, bool commitImmediately = true, bool skipValidation = false)
         {
-            PreUpdate(dto);
+            // validation skipping provides for cases where validation is done elsewhere. External consumers can't disable this
+            if (!skipValidation) PreUpdate(dto);
 
             TEnt foundEntity = GetEnt(dto.Id);
             UpdateEntity(foundEntity, dto);
 
-            PostUpdate(foundEntity);
+            if (!skipValidation) PostUpdate(foundEntity);
 
             if (commitImmediately)
             {
@@ -159,15 +173,19 @@ namespace HappeningsDotNetC.Services
             return DtoFromEntity(foundEntity);
         }
 
-        public void Delete(Guid id, bool commitImmediately = true)
+        public virtual TDto Update(TDto dto, bool commitImmediately = true)
         {
+            return UpdateCore(dto, commitImmediately);
+        }
 
+        protected void DeleteCore(Guid id, bool commitImmediately = true, bool skipValidation = false)
+        {
             TEnt foundEntity = GetEnt(id);
-            PreDelete(foundEntity);
+            if (!skipValidation) PreDelete(foundEntity);
 
             DeleteEnt(foundEntity);
 
-            PostDelete(foundEntity);
+            if (!skipValidation) PostDelete(foundEntity);
 
             if (commitImmediately)
             {
@@ -175,7 +193,12 @@ namespace HappeningsDotNetC.Services
             }
         }
 
-        public IEnumerable<TDto> Update(IEnumerable<TDto> dtos, bool commitImmediately = true)
+        public virtual void Delete(Guid id, bool commitImmediately = true)
+        {
+            DeleteCore(id, commitImmediately, false);
+        }
+
+        public virtual IEnumerable<TDto> Update(IEnumerable<TDto> dtos, bool commitImmediately = true)
         {
             List<TDto> result = new List<TDto>(dtos.Count());
 
@@ -192,7 +215,7 @@ namespace HappeningsDotNetC.Services
             return result;
         }
 
-        public void Delete(IEnumerable<Guid> ids, bool commitImmediately = true)
+        public virtual void Delete(IEnumerable<Guid> ids, bool commitImmediately = true)
         {
             // this approach is not the most efficient but is easy code to read and the application has no requirements to perform at large scales
             foreach (Guid id in ids)

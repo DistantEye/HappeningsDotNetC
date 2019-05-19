@@ -22,9 +22,9 @@ namespace HappeningsDotNetC.Services
             reminderService = reminderServ;
         }
 
-        public override IQueryable<HappeningUser> GetQueryable()
+        public override IQueryable<HappeningUser> GetQueryable(bool local = false)
         {
-            return base.GetQueryable()
+            return base.GetQueryable(local)
                         .Include(x => x.Happening).ThenInclude(x => x.ControllingUser)
                         .Include(x => x.User);
         }

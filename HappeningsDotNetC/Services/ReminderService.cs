@@ -18,9 +18,9 @@ namespace HappeningsDotNetC.Services
 
         }
 
-        public override IQueryable<Reminder> GetQueryable()
+        public override IQueryable<Reminder> GetQueryable(bool local = false)
         {
-            return base.GetQueryable().Include(x => x.HappeningUser).ThenInclude(x => x.Happening);
+            return base.GetQueryable(local).Include(x => x.HappeningUser).ThenInclude(x => x.Happening);
         }
 
         public override IEnumerable<ReminderDto> GetForUser(Guid id)

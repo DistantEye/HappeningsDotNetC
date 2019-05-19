@@ -10,6 +10,7 @@ using HappeningsDotNetC.Interfaces.ServiceInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using HappeningsDotNetC.Dtos.IntermediaryDtos;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Controllers
 {
@@ -38,7 +39,15 @@ namespace HappeningsDotNetC.Controllers
         [HttpPost]
         public IActionResult Delete(Guid id)
         {
-            ApiDelete(id);
+            try
+            {
+                ApiDelete(id);
+            }
+            catch (HandledException he)
+            {
+                string messages = he.Message;
+                return new RedirectToActionResult("Index", "Admin", new { message = messages });
+            }            
 
             return new RedirectToActionResult("Index", "Admin", new { });
         }
@@ -50,7 +59,15 @@ namespace HappeningsDotNetC.Controllers
 
             if (ModelState.IsValid)
             {
-                ApiUpdate(userDtos);
+                try
+                {
+                    ApiUpdate(userDtos);
+                }
+                catch(HandledException he)
+                {
+                    messages = he.Message;
+                    return new RedirectToActionResult("Index", "Admin", new { message = messages });
+                }
             }
             else
             {
@@ -68,7 +85,15 @@ namespace HappeningsDotNetC.Controllers
 
             if (ModelState.IsValid)
             {
-                ApiCreate(dto);
+                try
+                {
+                    ApiCreate(dto);
+                }
+                catch (HandledException he)
+                {
+                    messages = he.Message;
+                    return new RedirectToActionResult("Index", "Admin", new { message = messages });
+                }
             }
             else
             {
@@ -120,12 +145,15 @@ namespace HappeningsDotNetC.Controllers
 
         // Deletes have to try and clear out Happening memberships first
         public override IActionResult ApiDelete(Guid id)
-        {            
+        {
+            // this may be unobtainable later so grab it now
+            Guid currentUID = loginService.GetCurrentUserId();
+
             var memberships = membershipService.GetForUser(id).Select(x => x.Id);
             membershipService.Delete(memberships, false);
             var result = base.ApiDelete(id);
 
-            if (id == loginService.GetCurrentUserId())
+            if (id == currentUID)
             {
                 // trigger a logout instead of the normal behavior if the current user was deleted
                 loginService.Logout();
@@ -136,14 +164,17 @@ namespace HappeningsDotNetC.Controllers
 
         public override IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
         {
-            foreach(Guid id in ids)
+            // this may be unobtainable later so grab it now
+            Guid currentUID = loginService.GetCurrentUserId();
+
+            foreach (Guid id in ids)
             {
                 var memberships = membershipService.GetForUser(id).Select(x => x.Id);
                 membershipService.Delete(memberships, false);
             }
             var result = base.ApiDelete(ids);
 
-            if (ids.Contains(loginService.GetCurrentUserId()))
+            if (ids.Contains(currentUID))
             {
                 // trigger a logout instead of the normal behavior if the current user was deleted
                 loginService.Logout();

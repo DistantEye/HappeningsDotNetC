@@ -10,7 +10,7 @@ namespace HappeningsDotNetC.Interfaces.ServiceInterfaces
     public interface IApiEntityService<TEnt, TDto> : IApiService<TDto> where TEnt : class, IDbEntity
                                                                         where TDto : class, IDbDto
     {
-        IQueryable<TEnt> GetQueryable();
+        IQueryable<TEnt> GetQueryable(bool local = false);
         TEnt GetEnt(Guid id);
         TEnt GetEntOrDefault(Guid id);
         TDto DtoFromEntity(TEnt entity);

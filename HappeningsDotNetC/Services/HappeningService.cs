@@ -39,9 +39,9 @@ namespace HappeningsDotNetC.Services
             }
         }
 
-        public override IQueryable<Happening> GetQueryable()
+        public override IQueryable<Happening> GetQueryable(bool local = false)
         {
-            return base.GetQueryable()
+            return base.GetQueryable(local)
                         .Include(x => x.ControllingUser)
                         .Include(x => x.AllUsers).ThenInclude(x => x.User);
         }
