@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -49,9 +50,14 @@ namespace HappeningsDotNetC
 
             DependencyInjectionMappings.Map(services); // Handles all registrations            
 
+            /*
             var connection = @"Server=(localdb)\mssqllocaldb;Database=HappeningsDB;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<HappeningsContext>
                 (options => options.UseSqlServer(connection));
+                */
+
+            services.AddEntityFrameworkSqlite()
+            .AddDbContext<HappeningsContext>();
 
         }
 
@@ -63,7 +69,7 @@ namespace HappeningsDotNetC
                                     .AllowAnyMethod()
                                     .AllowAnyHeader()
                                     .AllowCredentials());
-            app.UseMiddleware<MaintainCorsHeadersMiddleware>();
+            app.UseMiddleware<MaintainCorsHeadersMiddleware>();            
 
             app.UseWhen(x => x.Request.Path.Value.StartsWith("/api"), builder =>
             {
@@ -103,7 +109,9 @@ namespace HappeningsDotNetC
             app.UseStaticFiles();
             app.UseAuthentication(); 
             app.UseCookiePolicy();
-            app.UseSession();            
+            app.UseSession();
+
+            app.UseMiddleware<LoginVerificationMiddleware>(); // needs to be run after authentication
 
             app.UseMvc(routes =>
             {
@@ -111,6 +119,12 @@ namespace HappeningsDotNetC
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            using (var db = new HappeningsContext())
+            {
+                db.Database.EnsureCreated();
+                //db.Database.Migrate();  // this line is in a lot of the guides but running it will make it try and double migrate, confusing matters severely
+            }
         }
     }
 }

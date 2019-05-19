@@ -53,6 +53,35 @@ namespace HappeningsDotNetC.Services
             ValidateUser(dto);
         }
 
+        protected override void PostUpdate(User Ent)
+        {
+            base.PostUpdate(Ent);
+
+            // make sure there's still at least one admin user after updates : we need to do this in Post because mass updates can give a false negative on checks
+            IQueryable<User> adminUsers = GetQueryable().Where(x => x.Role == UserRole.Admin);
+
+            var test = adminUsers.ToArray();
+
+            if (adminUsers.Count() == 0)
+            {
+                throw new HandledException(new ArgumentException("Changeset would result in no admin users remaining, there must always be one admin unless it's the last user being deleted"));
+            }
+        }
+
+        protected override void PostDelete(User Ent)
+        {
+            base.PostDelete(Ent);
+
+            // make sure there's still at least one admin user after updates : we need to do this in Post because mass deletes can give a false negative on checks
+            IQueryable<User> adminUsers = GetQueryable().Where(x => x.Role == UserRole.Admin);
+            IQueryable<User> nonAdminUsers = GetQueryable().Where(x => x.Role != UserRole.Admin);
+
+            if (adminUsers.Count() == 0 && nonAdminUsers.Count() > 0)
+            {
+                throw new HandledException(new ArgumentException("Can't delete here must always be one admin left unless it's the last user being deleted"));
+            }
+        }
+
         public override User CreateEntity(UserDto dto)
         {
             return new User(Guid.NewGuid(), Enum.Parse<UserRole>(dto.Role, true), dto.Name, dto.FriendlyName, dto.CalendarVisibleToOthers, dto.PasswordOrHash);

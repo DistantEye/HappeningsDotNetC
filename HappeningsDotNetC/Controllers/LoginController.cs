@@ -28,6 +28,12 @@ namespace HappeningsDotNetC.Controllers
         [HttpGet]
         public IActionResult Login(string message = "")
         {
+            // redirect to New User with special message if no users have been created yet
+            if (userService.Get().Count() == 0)
+            {
+                return new RedirectToActionResult("Register", "Login", new { message = "No Users Found : Create the Admin User" });
+            }
+
             ViewData["Title"] = "Login";
             ViewData["Message"] = message;
             return View();

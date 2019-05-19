@@ -101,12 +101,40 @@ namespace HappeningsDotNetC.Services
         {
             List<CreatedLoginDto> result = new List<CreatedLoginDto>(dtos.Count());
 
+            // if null was passed in for the password slot we use the old password
             foreach(var dto in dtos)
             {
-                result.Add(RegisterOrUpdate(dto));
+                if (String.IsNullOrEmpty(dto.Password))
+                {
+                    // this will throw an Error if the user doesn't exist, so that case should be covered
+                    User u = FindUser(dto.UserName);
+                    result.Add(new CreatedLoginDto()
+                    {
+                        UserName = dto.UserName,
+                        Hash = u.Hash
+                    });
+                }
+                else
+                {
+                    result.Add(RegisterOrUpdate(dto));
+                }
             }
 
             return result;
+        }
+
+        // detect whether there's a logged in user that no longer exists
+        public bool IsLoginSane()
+        {
+            ClaimsPrincipal current = httpAccess.HttpContext.User;
+
+            if (current == null || !current.Identity.IsAuthenticated) return true; // an unauthenticated user is still sane
+
+            string userName = current.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name.ToString()).Value;
+
+            User currentUser = FindUserInternal(userName, false);
+
+            return currentUser != null;
         }
 
         public Guid GetCurrentUserId()
@@ -122,16 +150,32 @@ namespace HappeningsDotNetC.Services
 
             string userName = current.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name.ToString()).Value;
 
-            User currentUser = FindUser(userName);
+            User currentUser = FindUserInternal(userName);
 
             return currentUser;
         }
 
+        // outside facing consumers don't get to make throwing exceptions optional
         public User FindUser(string userName)
+        {
+            return FindUserInternal(userName);
+        }
+
+        public User FindUserInternal(string userName, bool throwError = true)
         {
             User currentUser = happeningsContext.Set<User>().SingleOrDefault(x => x.Name == userName);
 
-            if (currentUser == null) throw new HandledException(new KeyNotFoundException("Specified username does not exist in the database"));
+            if (currentUser == null)
+            {
+                if (throwError)
+                {
+                    throw new HandledException(new KeyNotFoundException("Specified username does not exist in the database"));
+                }
+                else
+                {
+                    return null;
+                }
+            }
 
             return currentUser;
         }

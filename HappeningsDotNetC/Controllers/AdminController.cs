@@ -123,7 +123,15 @@ namespace HappeningsDotNetC.Controllers
         {            
             var memberships = membershipService.GetForUser(id).Select(x => x.Id);
             membershipService.Delete(memberships, false);
-            return base.ApiDelete(id);
+            var result = base.ApiDelete(id);
+
+            if (id == loginService.GetCurrentUserId())
+            {
+                // trigger a logout instead of the normal behavior if the current user was deleted
+                loginService.Logout();
+            }
+
+            return result;
         }
 
         public override IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
@@ -133,7 +141,15 @@ namespace HappeningsDotNetC.Controllers
                 var memberships = membershipService.GetForUser(id).Select(x => x.Id);
                 membershipService.Delete(memberships, false);
             }
-            return base.ApiDelete(ids);
+            var result = base.ApiDelete(ids);
+
+            if (ids.Contains(loginService.GetCurrentUserId()))
+            {
+                // trigger a logout instead of the normal behavior if the current user was deleted
+                loginService.Logout();
+            }
+
+            return result;
         }
     }
 }

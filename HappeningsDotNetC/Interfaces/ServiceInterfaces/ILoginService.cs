@@ -17,5 +17,6 @@ namespace HappeningsDotNetC.Interfaces.ServiceInterfaces
         Guid GetCurrentUserId();
         User GetCurrentUser();
         User FindUser(string userName);
+        bool IsLoginSane();
     }
 }
