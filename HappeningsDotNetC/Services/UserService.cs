@@ -37,6 +37,18 @@ namespace HappeningsDotNetC.Services
 
         protected virtual void ValidateUser(IEnumerable<UserValidationDto> modSet)
         {
+            int userCount = GetCount();
+            int modSetSize = modSet.Count();
+            var currentUser = loginService.GetCurrentUser();
+            var currentUserRole = currentUser != null ? currentUser.Role : UserRole.Anonymous;
+            Guid currentUserId = currentUser != null ? currentUser.Id : Guid.Empty;
+
+            // handle some permissions across the entire set : note that if the Users Table is empty, you can always create an admin user
+            bool canCreate = SystemData.OpenRegistration || currentUserRole == UserRole.Admin || (userCount == 0 && modSetSize == 1);
+            bool canCreateAdmins = currentUserRole == UserRole.Admin || (userCount == 0 && modSetSize == 1);
+            bool canEditOthers = currentUserRole == UserRole.Admin;
+
+
             IEnumerable<Guid> modSetIds = modSet.Where(x => x.Id != null && x.Id != Guid.Empty).Select(x => x.Id).ToArray();
 
             // cast Query to array since we may be making multiple passes on it and EF doesn't always treat this as performance sanely as you'd expect
@@ -44,6 +56,35 @@ namespace HappeningsDotNetC.Services
 
             foreach (UserValidationDto dto in modSet)
             {
+                // basic permissions checking
+                bool isCreating = dto.Id == Guid.Empty;
+
+                if (isCreating)
+                {
+                    if (!canCreate)
+                    {
+                        throw new HandledException(new ArgumentException("User lacks permissions to create new users!"));
+                    }
+                    if (dto.Role == UserRole.Admin && !canCreateAdmins)
+                    {
+                        throw new HandledException(new ArgumentException("User lacks permissions to create admin users!"));
+                    }
+                }
+                else
+                {
+                    bool isOtherUser = dto.Id != currentUserId;
+
+                    // is updating
+                    if (isOtherUser && !canEditOthers)
+                    {
+                        throw new HandledException(new ArgumentException("User lacks permissions to edit other users!"));
+                    }
+                    if (dto.Role == UserRole.Admin && !canCreateAdmins)
+                    {
+                        throw new HandledException(new ArgumentException("User lacks permissions to make users admins!"));
+                    }
+                }
+
                 IEnumerable<UserValidationDto> usersWithName = data.Where(x => x.Name == dto.Name);
 
                 if (usersWithName.Count() > 0)

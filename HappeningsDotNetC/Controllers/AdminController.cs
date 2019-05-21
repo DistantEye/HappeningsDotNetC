@@ -18,11 +18,14 @@ namespace HappeningsDotNetC.Controllers
     public class AdminController : AppController<UserDto>
     {
         private IApiService<InvitationDto> membershipService;
+        private IApiService<SystemDataDto> systemService;
 
         public AdminController(ILoginService loginService, IApiService<UserDto> apiService,
-                                IApiService<ReminderDto> reminderServ, IApiService<InvitationDto> joinService) : base(loginService, apiService, reminderServ)
+                                IApiService<ReminderDto> reminderServ, IApiService<InvitationDto> joinService,
+                                IApiService<SystemDataDto> sysService) : base(loginService, apiService, reminderServ)
         {
             membershipService = joinService;
+            systemService = sysService;
         }
 
         // Idea is to only have one page (tabular) with updates/create/deletes being able to be made in line and then submitted in bulk
@@ -32,6 +35,10 @@ namespace HappeningsDotNetC.Controllers
         {
             ViewData["Title"] = "Administration";
             ViewData["Message"] = message;
+
+            var systemData = ApiSystemGet();
+            ViewData["SystemDataId"] = systemData.Id;
+            ViewData["OpenRegistration"] = systemData.OpenRegistration;
 
             return View(ApiGet());
         }
@@ -48,6 +55,22 @@ namespace HappeningsDotNetC.Controllers
                 string messages = he.Message;
                 return new RedirectToActionResult("Index", "Admin", new { message = messages });
             }            
+
+            return new RedirectToActionResult("Index", "Admin", new { });
+        }
+
+        [HttpPost]
+        public IActionResult UpdateSystemData(SystemDataDto dto)
+        {
+            try
+            {
+                ApiSystemUpdate(dto);
+            }
+            catch (HandledException he)
+            {
+                string messages = he.Message;
+                return new RedirectToActionResult("Index", "Admin", new { message = messages });
+            }
 
             return new RedirectToActionResult("Index", "Admin", new { });
         }
@@ -181,6 +204,18 @@ namespace HappeningsDotNetC.Controllers
             }
 
             return result;
+        }
+
+        [HttpGet("/api/[controller]/system")]
+        public virtual SystemDataDto ApiSystemGet()
+        {
+            return systemService.Get().First();
+        }
+
+        [HttpPut("/api/[controller]/system")]
+        public virtual SystemDataDto ApiSystemUpdate([FromBody] SystemDataDto dto)
+        {
+            return systemService.Update(dto);
         }
     }
 }

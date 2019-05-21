@@ -4,6 +4,28 @@
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
 
+<h3>System Configuration</h3>
+    <div class="baseTable">
+        <form asp-controller="Admin" asp-action="UpdateSystemData" method="post">
+            <input type="hidden" name="Id" value="@ViewData["SystemDataId"]" />
+            <div class="tableRow">
+                <div class="tableCell bold">
+                    Users Can Create Accounts for Themselves:
+                </div>
+            </div>
+            <div class="tableRow">
+                <div class="tableCell">
+                    Yes @Html.RadioButton("OpenRegistration", true, ViewData["OpenRegistration"])
+                </div>
+                <div class="tableCell">
+                    No @Html.RadioButton("OpenRegistration", false, ViewData["OpenRegistration"])
+                </div>
+            </div>
+            <input type="submit" value="Update Settings" />
+        </form>
+    </div>
+<br />
+
 <h3>Existing Users</h3>
 
 <div class="baseTable">

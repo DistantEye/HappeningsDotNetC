@@ -261,3 +261,8 @@ __pycache__/
 *.pyc
 lib
 /HappeningsDotNetC/HappeningsDb.db
+/HappeningsDotNetC/wwwroot/react/favicon.ico
+/HappeningsDotNetC/wwwroot/react/index.html
+/HappeningsDotNetC/wwwroot/react/manifest.json
+/HappeningsDotNetC/wwwroot/react/static
+/HappeningsDotNetC/wwwroot/react/asset-manifest.json

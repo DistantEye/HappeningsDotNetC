@@ -10,4 +10,11 @@
     <button type="submit">Login</button>
 </form>
 
-<a asp-area="" asp-controller="Login" asp-action="Register">New User</a> <br />
+@if ((bool)ViewData["OpenRegistration"])
+{
+    <a asp-area="" asp-controller="Login" asp-action="Register">New User</a> <br />
+}
+else
+{
+    <p class="bold">Open Registration Disabled -- Contact Admin for an account</p>
+}

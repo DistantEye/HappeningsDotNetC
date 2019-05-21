@@ -1,7 +1,7 @@
 ﻿@model HappeningsDotNetC.Dtos.EntityDtos.UserDto
 @{
     // patch selection setting because our Model field is the Text, not the Value. We handle byte/int setting in controller
-    var dropDownList = Html.GetEnumSelectList<HappeningsDotNetC.Models.UserRole>();
+    var dropDownList = Html.GetEnumSelectList<HappeningsDotNetC.Models.UserRole>().Where(x => x.Text != "Anonymous");
     foreach (var item in dropDownList)
     {
         item.Value = item.Text;

@@ -10,17 +10,21 @@ using HappeningsDotNetC.Dtos.EntityDtos;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using HappeningsDotNetC.Helpers;
 using HappeningsDotNetC.Dtos.IntermediaryDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HappeningsDotNetC.Controllers
 {
     public class HomeController : AppController<UserDto>
     {
         private IApiService<InvitationDto> membershipService;
+        private IApiService<SystemDataDto> systemService;
 
         public HomeController(ILoginService loginService, IApiService<UserDto> apiService, 
-                            IApiService<ReminderDto> reminderServ, IApiService<InvitationDto> joinService) : base(loginService, apiService, reminderServ)
+                            IApiService<ReminderDto> reminderServ, IApiService<InvitationDto> joinService,
+                            IApiService<SystemDataDto> sysService) : base(loginService, apiService, reminderServ)
         {
             membershipService = joinService;
+            systemService = sysService;
         }
 
 
@@ -112,6 +116,30 @@ namespace HappeningsDotNetC.Controllers
         public override IEnumerable<UserDto> ApiUpdate([FromBody] IEnumerable<UserDto> dtos)
         {
             throw new HandledException(new NotImplementedException("Cannot mass update users from this endpoint"));
+        }
+
+        // bundles together multiple common api calls into one request for brevity/sanity
+        [AllowAnonymous]
+        [Route("/api/home/getInfo")]
+        public SystemInfoDto ApiGetInfo()
+        {
+            var currentUser = loginService.GetCurrentUser();
+            
+            var userDto = currentUser != null ? apiService.Get(currentUser.Id) : null;
+
+            int userCount = apiService.GetCount();
+
+            int reminderCount = currentUser == null ? 0 : reminderService.GetForUser(loginService.GetCurrentUserId()).Where(x => !x.IsSilenced &&  DateTime.Now >= x.StartRemindAt).Count();
+
+            bool openRegistration = systemService.Get().First().OpenRegistration;
+
+            return new SystemInfoDto()
+            {
+                CurrentUser = userDto,
+                HasUsers = userCount > 0,
+                ReminderCount = reminderCount,
+                OpenRegistration = openRegistration || userCount == 0 // for the purposes of most screens, openRegistration exists if no users have been made yet
+            };
         }
     }
 }

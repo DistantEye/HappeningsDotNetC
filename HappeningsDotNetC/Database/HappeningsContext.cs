@@ -22,6 +22,28 @@ namespace HappeningsDotNetC.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Happening> Happenings { get; set; }
         public DbSet<Reminder> Reminders { get; set; }
+        private DbSet<SystemData> _SystemData { get; set; }
+
+        public SystemData SystemData
+        {
+            get
+            {
+                return _SystemData.FirstOrDefault();
+            }
+            set
+            {
+                SystemData initial = _SystemData.FirstOrDefault();
+                if (initial == null)
+                {
+                    _SystemData.Add(value);
+                }
+                else
+                {
+                    _SystemData.Remove(initial);
+                    _SystemData.Add(value);
+                }
+            }
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -41,6 +63,7 @@ namespace HappeningsDotNetC.Infrastructure
 
             modelBuilder.Entity<HappeningUser>().HasOne(eu => eu.Reminder).WithOne(r => r.HappeningUser).OnDelete(DeleteBehavior.Cascade);
         }
+        
     }
 
 }

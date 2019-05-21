@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -63,13 +64,16 @@ namespace HappeningsDotNetC
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
+        {            
             app.UseCors(builder => builder
                                     .AllowAnyOrigin() // in production this should be configured to only target the intended frontend site
                                     .AllowAnyMethod()
                                     .AllowAnyHeader()
                                     .AllowCredentials());
-            app.UseMiddleware<MaintainCorsHeadersMiddleware>();            
+            app.UseMiddleware<MaintainCorsHeadersMiddleware>();
+
+            // interpret requests to react as going to the proper place
+            app.UseRewriter(new RewriteOptions().AddRewrite(@"^react/$", "/react/index.html", true));
 
             app.UseWhen(x => x.Request.Path.Value.StartsWith("/api"), builder =>
             {
@@ -124,6 +128,13 @@ namespace HappeningsDotNetC
             {
                 db.Database.EnsureCreated();
                 //db.Database.Migrate();  // this line is in a lot of the guides but running it will make it try and double migrate, confusing matters severely
+
+                // This is definetely hackish but most of the other solutions for database seeding are overkill for ensuring single row in a single table exists
+                if (db.SystemData == null)
+                {
+                    db.SystemData = new Models.SystemData(Guid.NewGuid(), true);
+                    db.SaveChanges();
+                }
             }
         }
     }

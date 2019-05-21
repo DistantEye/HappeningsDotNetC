@@ -2,6 +2,7 @@
 using HappeningsDotNetC.Infrastructure;
 using HappeningsDotNetC.Interfaces.EntityInterfaces;
 using HappeningsDotNetC.Interfaces.ServiceInterfaces;
+using HappeningsDotNetC.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,9 @@ namespace HappeningsDotNetC.Services
             // later revisions may change this (or even go back to the respository pattern kicking and screaming, if need be)
             happeningsContext = hc;
             loginService = loginServ;
-        }        
+        }     
+        
+        protected SystemData SystemData { get { return happeningsContext.SystemData; } }
 
         public abstract TEnt CreateEntity(TDto dto); // Note this does NOT imply SaveChanges is run and it should NOT be
 
@@ -147,6 +150,11 @@ namespace HappeningsDotNetC.Services
         public IEnumerable<TDto> Get()
         {
             return GetQueryable().Select(x => DtoFromEntity(x));
+        }
+
+        public int GetCount()
+        {
+            return GetQueryable().Count();
         }
 
         public TDto Get(Guid id)

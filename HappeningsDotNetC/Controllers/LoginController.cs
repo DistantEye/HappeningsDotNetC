@@ -17,11 +17,13 @@ namespace HappeningsDotNetC.Controllers
     {
         private readonly ILoginService loginService;
         private readonly IApiService<UserDto> userService;
+        private readonly IApiService<SystemDataDto> systemService;
 
-        public LoginController(ILoginService lS, IApiService<UserDto> uS) : base()
+        public LoginController(ILoginService lS, IApiService<UserDto> uS, IApiService<SystemDataDto> sS) : base()
         {
             loginService = lS;
             userService = uS;
+            systemService = sS;
         }
 
         [AllowAnonymous]
@@ -36,14 +38,14 @@ namespace HappeningsDotNetC.Controllers
 
             ViewData["Title"] = "Login";
             ViewData["Message"] = message;
+            ViewData["OpenRegistration"] = systemService.Get().First().OpenRegistration;
             return View();
         }
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginDto loginDto)
-        {
-
+        {            
             if (await ApiLogin(loginDto))
             {
                 return new RedirectToActionResult("Index", "Calendar", new { });
@@ -51,8 +53,7 @@ namespace HappeningsDotNetC.Controllers
             else
             {
                 return new RedirectToActionResult("Login", "Login", new { message = "Username or password is incorrect" });
-            }
-
+            }            
         }
 
         [HttpGet]
@@ -88,6 +89,12 @@ namespace HappeningsDotNetC.Controllers
             {
                 // user creation was rejected
                 return new RedirectToActionResult("Register", "Login", new { message = ae });
+            }
+            catch (HandledException he)
+            {
+                // user creation was rejected - Handled version : this should be the normal case and 
+                // we might want unhandled to be caught differently later, for now they work the same
+                return new RedirectToActionResult("Register", "Login", new { message = he.Message });
             }
 
             // login user once successfully registered

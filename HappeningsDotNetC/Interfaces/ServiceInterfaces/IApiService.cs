@@ -11,7 +11,8 @@ namespace HappeningsDotNetC.Interfaces.ServiceInterfaces
     {
         IEnumerable<TDto> Get();
         TDto Get(Guid id);
-        
+        int GetCount();
+
         TDto Create(TDto dto, bool commitImmediately = true);
         TDto Update(TDto dto, bool commitImmediately = true);
         void Delete(Guid id, bool commitImmediately = true); // no bool needed, it should throw an Error directly if there's any problems deleting

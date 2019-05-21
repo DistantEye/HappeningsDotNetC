@@ -27,6 +27,7 @@ namespace HappeningsDotNetC
             services.AddScoped<IApiService<ReminderDto>, ReminderService>();
             services.AddScoped<IApiService<UserDto>, UserService>();
             services.AddScoped<IApiService<InvitationDto>, InvitationService>();
+            services.AddScoped<IApiService<SystemDataDto>, SystemDataService>();
         }
     }
 }

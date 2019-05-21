@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using HappeningsDotNetC.Helpers;
 
 namespace HappeningsDotNetC.Models
 {
@@ -36,6 +37,8 @@ namespace HappeningsDotNetC.Models
 
         public void Update(UserRole role, string name, string friendlyName, bool calendarVisibleToOthers, string hash = null)
         {
+            if (role == UserRole.Anonymous) { throw new HandledException(new ArgumentException("A user can never be set to the Anonymous role!")); }
+
             Role = role;
             Name = name;
             FriendlyName = friendlyName;
@@ -47,6 +50,6 @@ namespace HappeningsDotNetC.Models
 
     public enum UserRole
     {
-        Normal, Admin
+        Normal, Admin, Anonymous
     }
 }
