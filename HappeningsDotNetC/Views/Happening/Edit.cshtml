@@ -42,6 +42,10 @@
     </div>
 
     <button type="submit">@ViewData["PageVerb"] Happening</button>
+    @if ((string)ViewData["PageVerb"] == "Create")
+    {
+        <span>Note: Happenings start empty. Add users after creation</span>
+    }
 </form>
 
 @if ((string)ViewData["PageVerb"] == "Edit")
@@ -62,7 +66,7 @@
     <form asp-controller="Happening" asp-action="AddHappeningMember" method="post">
         @Html.Hidden("HappeningId", Model.Id)
         @Html.DropDownList("UserId", new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value"))
-        <button type="submit">Add User</button>
+        <button type="submit">Add User</button>        
     </form>
 }
 
