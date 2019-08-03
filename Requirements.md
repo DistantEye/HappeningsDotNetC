@@ -77,7 +77,7 @@ These are either the direct database elements or other supporting elements for t
     * Each happening row should have some form of clickable means to navigate to View/Edit Happening Information in full
 
   * Happening Create
-    * Aside from visual indicators of the page being Create rather than edit, this should be requirements indentical to a black version of Happening Administration (editting)
+    * Aside from visual indicators of the page being Create rather than edit, this should be requirements indentical to a blank version of Happening Administration (editting)
 
   * Happening Administration
     * Should include text/date fields for setting the following information : date/time, name, description, primary user, secondary users, list of user RVSP status***, visibility info***, reminder settings***
