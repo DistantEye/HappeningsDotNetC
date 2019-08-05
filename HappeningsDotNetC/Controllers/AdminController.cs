@@ -170,7 +170,7 @@ namespace HappeningsDotNetC.Controllers
         public override IActionResult ApiDelete(Guid id)
         {
             // this may be unobtainable later so grab it now
-            Guid currentUID = loginService.GetCurrentUserId();
+            Guid currentUID = loginService.GetCurrentUserId(true).Value;
 
             var memberships = membershipService.GetForUser(id).Select(x => x.Id);
             membershipService.Delete(memberships, false);
@@ -188,7 +188,7 @@ namespace HappeningsDotNetC.Controllers
         public override IActionResult ApiDelete([FromBody] IEnumerable<Guid> ids)
         {
             // this may be unobtainable later so grab it now
-            Guid currentUID = loginService.GetCurrentUserId();
+            Guid currentUID = loginService.GetCurrentUserId(true).Value;
 
             foreach (Guid id in ids)
             {

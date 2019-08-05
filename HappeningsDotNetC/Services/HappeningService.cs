@@ -52,7 +52,7 @@ namespace HappeningsDotNetC.Services
             User currentUser = loginService.GetCurrentUser();
 
             // although UserId == null is a different case which doesn't need the same direct permissions check            
-            bool isCurrentUser = filter.UserId != null && filter.UserId.Value == loginService.GetCurrentUserId();
+            bool isCurrentUser = filter.UserId != null && filter.UserId.Value == loginService.GetCurrentUserId(true).Value;
             
             if (!isCurrentUser && filter.UserId != null)
             {
@@ -72,9 +72,19 @@ namespace HappeningsDotNetC.Services
                                                                                                       || currentUser.Role == UserRole.Admin)
                                                                                                   ))
                                                                            && ((isCurrentUser || currentUser.Role == UserRole.Admin) || !x.IsPrivate)
-                                                                           && (filter.StartDate == null || x.StartTime >= filter.StartDate.Value)
-                                                                           && (filter.EndDate == null || x.EndTime <= filter.EndDate.Value)).OrderBy(x => x.StartTime)
-                                            .Select(x => DtoFromEntity(x));
+                                                                           &&   (  // this complex part captures whether either the start or end time of the event is contained within the search range
+                                                                                    (
+                                                                                        (filter.StartDate == null || x.StartTime >= filter.StartDate.Value)
+                                                                                        && (filter.EndDate == null || x.StartTime <= filter.EndDate.Value)
+                                                                                    )
+                                                                                        ||
+                                                                                    (
+                                                                                        (filter.StartDate == null || x.EndTime >= filter.StartDate.Value)
+                                                                                        && (filter.EndDate == null || x.EndTime <= filter.EndDate.Value)
+                                                                                    )
+                                                                                )
+                                                                           ).OrderBy(x => x.StartTime)
+                                            .Select(x => DtoFromEntityWithUserData(x, filter.UserId ?? currentUser.Id));
 
             if (filter.TextualDisplay)
             {
@@ -104,16 +114,28 @@ namespace HappeningsDotNetC.Services
 
                 IEnumerable<HappeningDto> sortedData = data.OrderBy(x => x.StartTime);
 
+                
+
+                // since start and end dates can extend beyond the month the calculations can get a little complicated
+                int currentMonth = filter.StartDate.Value.Month;
+                int currentYear = filter.StartDate.Value.Year;
+
+                DateTime earliestStart = sortedData.Select(x => x.StartTime).OrderBy(x => x).First();
+                DateTime latestEnd = sortedData.Select(x => x.EndTime).OrderBy(x => x).Last();
+
                 // start and end end range offset by -1 to match array notation
 
-                int startDay = sortedData.First().StartTime.Day - 1;
-                int endDay = sortedData.Last().StartTime.Day - 1;
+                int startDay = earliestStart.Month == currentMonth && earliestStart.Year == currentYear ? earliestStart.Day : 1;
+                int endDay = latestEnd.Month == currentMonth && latestEnd.Year == currentYear ? latestEnd.Day : days;
 
                 for (int x = startDay; x <= endDay; x++)
                 {
+                    DateTime date = new DateTime(currentYear, currentMonth, x);
+                    Func<DateTime, DateTime> dateFlatten = (DateTime input) => new DateTime(input.Year, input.Month, input.Day);
+
                     // find all happenings that are occuring on at least the particular day
-                    IEnumerable<HappeningDto> relevantRows = sortedData.Where(i => x+1 >= i.StartTime.Day && x+1 <= i.EndTime.Day );
-                    result[x].AddRange(relevantRows);
+                    IEnumerable<HappeningDto> relevantRows = sortedData.Where(i => date >= dateFlatten(i.StartTime) && date <= dateFlatten(i.EndTime) );
+                    result[x-1].AddRange(relevantRows); // days are 1 aligned, we have to -1 to convert to array positions which are 0 aligned
                 }
 
                 return result;
@@ -128,7 +150,6 @@ namespace HappeningsDotNetC.Services
 
         public override HappeningDto DtoFromEntity(Happening entity)
         {
-
             return new HappeningDto()
             {
                 Id = entity.Id,
@@ -139,8 +160,23 @@ namespace HappeningsDotNetC.Services
                 StartTime = entity.StartTime,
                 EndTime = entity.EndTime,
                 AllUsers = entity.AllUsers.Select(x => x.Id),
-                IsPrivate = entity.IsPrivate               
+                IsPrivate = entity.IsPrivate
             };
+        }
+
+        public HappeningDto DtoFromEntityWithUserData(Happening entity, Guid? userId)
+        {
+            var result = DtoFromEntity(entity);
+
+            if (userId == null || userId.Value == Guid.Empty)
+            {
+                return result; // nothing extra to add for an empty user spec
+            }
+
+            // get RVSP enum if availible
+            var status = entity.AllUsers.SingleOrDefault(x => x.UserId == userId);            
+            result.UserStatus = status != null ? status.UserStatus.ToString() : null;
+            return result;
         }
 
         protected override void UpdateEntity(Happening entity, HappeningDto dto)

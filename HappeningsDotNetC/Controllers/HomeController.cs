@@ -33,7 +33,7 @@ namespace HappeningsDotNetC.Controllers
             ViewData["Title"] = "Update Profile:";
             ViewData["Message"] = message;
 
-            return View(apiService.Get(loginService.GetCurrentUserId()));
+            return View(apiService.Get(loginService.GetCurrentUserId(true).Value));
         }
 
         [HttpPost]
@@ -96,7 +96,7 @@ namespace HappeningsDotNetC.Controllers
 
         public override IActionResult ApiDelete(Guid id)
         {
-            if (id != loginService.GetCurrentUserId())
+            if (id != loginService.GetCurrentUserId(true).Value)
             {
                 throw new HandledException(new NotImplementedException("Cannot delete other users from this endpoint"));
             }
@@ -129,7 +129,7 @@ namespace HappeningsDotNetC.Controllers
 
             int userCount = apiService.GetCount();
 
-            int reminderCount = currentUser == null ? 0 : reminderService.GetForUser(loginService.GetCurrentUserId()).Where(x => !x.IsSilenced &&  DateTime.Now >= x.StartRemindAt).Count();
+            int reminderCount = currentUser == null ? 0 : reminderService.GetForUser(loginService.GetCurrentUserId(true).Value).Where(x => !x.IsSilenced &&  DateTime.Now >= x.StartRemindAt).Count();
 
             bool openRegistration = systemService.Get().First().OpenRegistration;
 

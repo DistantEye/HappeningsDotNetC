@@ -90,10 +90,10 @@ namespace HappeningsDotNetC.Controllers
             ViewData["Title"] = "Calendar - " + monthName;
 
 
-            Guid currentUserId = loginService.GetCurrentUserId();
+            Guid? currentUserId = loginService.GetCurrentUserId();
 
             ViewData["OtherUserName"] = null;
-            if (userId != null && userId.Value != currentUserId)
+            if (userId != null && userId != currentUserId)
             {
                 ViewData["OtherUserName"] = userService.Get(userId.Value).FriendlyName;
             }

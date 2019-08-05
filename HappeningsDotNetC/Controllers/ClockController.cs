@@ -32,7 +32,7 @@ namespace HappeningsDotNetC.Controllers
         [Route("/api/[controller]/getdata")]
         public IEnumerable<ReminderDto> ApiGetData(bool includeSilenced = false, bool showNotYetActive = false)
         {
-            return apiService.GetForUser(loginService.GetCurrentUserId()).Where(x => (includeSilenced || !x.IsSilenced) && (showNotYetActive || DateTime.Now >= x.StartRemindAt));
+            return apiService.GetForUser(loginService.GetCurrentUserId(true).Value).Where(x => (includeSilenced || !x.IsSilenced) && (showNotYetActive || DateTime.Now >= x.StartRemindAt));
         }
 
         // for direct webapi grabs

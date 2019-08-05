@@ -20,6 +20,7 @@ namespace HappeningsDotNetC.Services
 
         protected readonly HappeningsContext happeningsContext;
         protected readonly ILoginService loginService;
+        protected readonly Guid? currentUserId;
 
         public AbstractApiService(HappeningsContext hc, ILoginService loginServ)
         {
@@ -27,6 +28,7 @@ namespace HappeningsDotNetC.Services
             // later revisions may change this (or even go back to the respository pattern kicking and screaming, if need be)
             happeningsContext = hc;
             loginService = loginServ;
+            currentUserId = loginService.GetCurrentUserId();
         }     
         
         protected SystemData SystemData { get { return happeningsContext.SystemData; } }

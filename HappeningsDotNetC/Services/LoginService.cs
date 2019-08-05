@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using HappeningsDotNetC.Helpers;
+using System.Security;
 
 namespace HappeningsDotNetC.Services
 {
@@ -137,9 +138,25 @@ namespace HappeningsDotNetC.Services
             return currentUser != null;
         }
 
-        public Guid GetCurrentUserId()
+        public Guid? GetCurrentUserId(bool errorOnNull = false)
         {
-            return GetCurrentUser().Id;
+            var user = GetCurrentUser();
+
+            if (user != null)
+            {
+                return user.Id;    
+            }
+            else
+            {
+                if (errorOnNull)
+                {
+                    throw new HandledException(new SecurityException("User not logged in and needs to be for this function"));
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         public User GetCurrentUser()

@@ -37,7 +37,7 @@ namespace HappeningsDotNetC.Controllers
             InvitationDto data = happeningService.GetHappeningMembership(id).SingleOrDefault(x => x.UserId == currentUser.Id);
             
 
-            if (currentUser.Role == UserRole.Admin || data.HappeningControllingUserId == currentUser.Id)
+            if (currentUser.Role == UserRole.Admin || (data != null && data.HappeningControllingUserId == currentUser.Id))
             {
                 ViewData["IsAdmin"] = true;                
             }
@@ -213,7 +213,7 @@ namespace HappeningsDotNetC.Controllers
         {
             var result = ApiGet(id);
 
-            result.CurrentUserInfo = invitationService.GetForUser(loginService.GetCurrentUserId()).SingleOrDefault(x => x.HappeningId == id);
+            result.CurrentUserInfo = invitationService.GetForUser(loginService.GetCurrentUserId(true).Value).SingleOrDefault(x => x.HappeningId == id);
 
             return result;
         }

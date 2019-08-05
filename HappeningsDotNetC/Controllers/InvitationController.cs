@@ -23,7 +23,7 @@ namespace HappeningsDotNetC.Controllers
             ViewData["Title"] = "Invitations";
 
             ViewData["IncludeResolved"] = includeResolved;
-            IEnumerable<InvitationDto> data = ApiGetForUser(loginService.GetCurrentUserId()).Where(x => includeResolved ||
+            IEnumerable<InvitationDto> data = ApiGetForUser(loginService.GetCurrentUserId(true).Value).Where(x => includeResolved ||
                                                                                                 (!x.Status.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)
                                                                                                     && !x.Status.Equals("No", StringComparison.InvariantCultureIgnoreCase)));
             return View(data);
@@ -40,7 +40,7 @@ namespace HappeningsDotNetC.Controllers
         [HttpGet("/api/[controller]/getuserinvitations/")]
         public virtual IEnumerable<InvitationDto> ApiGetUserInvitations(bool includeResolved = false)
         {
-            return ApiGetForUser(loginService.GetCurrentUserId()).Where(x => includeResolved ||
+            return ApiGetForUser(loginService.GetCurrentUserId(true).Value).Where(x => includeResolved ||
                                                                                                 (!x.Status.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)
                                                                                                     && !x.Status.Equals("No", StringComparison.InvariantCultureIgnoreCase)));
         }
@@ -48,13 +48,13 @@ namespace HappeningsDotNetC.Controllers
         [HttpGet("/api/[controller]/getuserinvitations/{happeningId}")]
         public virtual InvitationDto ApiGetInvitationForCurrent(Guid happeningId)
         {
-            return ApiGetForUser(loginService.GetCurrentUserId()).SingleOrDefault(x => x.HappeningId == happeningId);
+            return ApiGetForUser(loginService.GetCurrentUserId(true).Value).SingleOrDefault(x => x.HappeningId == happeningId);
         }
 
         [HttpGet("/api/[controller]/getalluserinvitations/")]
         public virtual IEnumerable<InvitationDto> ApiGetInvitations(Guid happeningId)
         {
-            return ApiGetForUser(loginService.GetCurrentUserId());
+            return ApiGetForUser(loginService.GetCurrentUserId(true).Value);
         }
 
     }

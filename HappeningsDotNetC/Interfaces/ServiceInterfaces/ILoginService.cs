@@ -14,7 +14,7 @@ namespace HappeningsDotNetC.Interfaces.ServiceInterfaces
         void Logout();
         CreatedLoginDto RegisterOrUpdate(LoginDto dto);
         IEnumerable<CreatedLoginDto> RegisterOrUpdate(IEnumerable<LoginDto> dtos);
-        Guid GetCurrentUserId();
+        Guid? GetCurrentUserId(bool errorOnNull = false);
         User GetCurrentUser();
         User FindUser(string userName);
         bool IsLoginSane();
