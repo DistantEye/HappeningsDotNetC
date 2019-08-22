@@ -19,7 +19,10 @@
             <div class="tableCell">Desc: </div>
             <div class="tableCell">@Html.EditorFor(model => model.Description)</div>
         </div>
-
+        <div class="tableRow">
+            <div class="tableCell">Event Color: </div>
+            <div class="tableCell">@Html.EditorFor(model => model.Flavor)</div>
+        </div>
         <div class="tableRow">
             <div class="tableCell">Organizer: </div>
             <div class="tableCell"> @Html.DropDownListFor(model => model.ControllingUserId, userDropDownList)</div>

@@ -15,6 +15,8 @@ namespace HappeningsDotNetC.Dtos.EntityDtos
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public string Flavor { get; set; }
+
         public string ControllingUser { get; set; }
         public Guid ControllingUserId { get; set; }
 

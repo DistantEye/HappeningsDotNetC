@@ -3,14 +3,16 @@ using System;
 using HappeningsDotNetC.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappeningsDotNetC.Database.Migrations
 {
     [DbContext(typeof(HappeningsContext))]
-    partial class HappeningsContextModelSnapshot : ModelSnapshot
+    [Migration("20190822015441_HappeningColors")]
+    partial class HappeningColors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
