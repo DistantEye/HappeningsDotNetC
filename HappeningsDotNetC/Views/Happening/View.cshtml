@@ -14,14 +14,20 @@
 @if ((bool)ViewData["IsAdmin"])
 {
     <a asp-area="" asp-controller="Happening" asp-action="Edit" asp-route-id="@ViewData["HappeningId"]">Edit Happening</a>
-    <br /><br />
+    <br />
+    <br />
 }
 
-<span class="bold">Name: </span> @ViewData["HappeningName"] <br />
-<span class="bold">Desc: </span> @ViewData["HappeningDesc"] <br />
-<span class="bold">Event Color: </span> @ViewData["HappeningFlavor"] <br /><br />
+<span class="bold">Name: </span> @ViewData["HappeningName"]
+<br />
+<span class="bold">Desc: </span> @ViewData["HappeningDesc"]
+<br />
+<span class="bold">Event Color: </span> <div class="indicator" style="background-color:#@ViewData["HappeningFlavor"];"></div>
+<br />
+<br />
 
-<span class="bold">Organizer: </span> @ViewData["HappeningControllingUser"] <br />
+<span class="bold">Organizer: </span> @ViewData["HappeningControllingUser"]
+<br />
 <span class="bold">Time: </span> @ViewData["HappeningStart"] to @ViewData["HappeningEnd"]
 
 @if (Model == null)
@@ -35,7 +41,7 @@
 else
 {
     <form asp-controller="Happening" asp-action="UpdateHappeningMemberNB" method="post">
-        @{ 
+        @{
             // dev note, the below use of manual hidden field is because of a weird bug with the model binder prioritizing the Id field
             // from QueryString over the Id field in model. While ugly, this solution might be a way around that problem occuring elsewhere too
         }
@@ -61,7 +67,8 @@ else
 
     </form>
 }
-<br /><br />
+<br />
+<br />
 @if (@ViewData["Referer"] != null && !string.IsNullOrWhiteSpace((string)@ViewData["Referer"]))
 {
     <a href="@ViewData["Referer"]">Return</a>
@@ -70,3 +77,18 @@ else
 {
     <a asp-area="" asp-controller="Calendar" asp-action="Index">Return to Calendar</a>
 }
+
+
+
+<!--Adding some custom CSS to simplify the existence of events-->
+
+<style type="text/css">
+   .findicator {
+        position: relative;
+        width: 1em;
+        height: 1em;
+        background-color: white;
+        border: 1px solid #000000;
+        display: inline-block;
+    }
+</style>

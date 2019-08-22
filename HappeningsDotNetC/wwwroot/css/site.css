@@ -148,4 +148,11 @@ body {
 vAlignCenter {
     vertical-align: middle;
 }
-
+.findicator {
+    position: relative;
+    width: 1em;
+    height: 1em;
+    background-color: white;
+    border: 1px solid #000000;
+    display: inline-block;
+}
