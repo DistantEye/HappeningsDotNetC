@@ -15,6 +15,8 @@ namespace HappeningsDotNetC.Models
         public string Name { get; protected set; }
         public string Description { get; protected set; }
 
+        public string Flavor { get; protected set; }
+
         // Note that this User does not have to be a member of AllUsers
         public User ControllingUser { get; protected set; }
         public Guid ControllingUserId { get; protected set; }
@@ -32,17 +34,18 @@ namespace HappeningsDotNetC.Models
 
         }
 
-        public Happening(Guid id, string name, string description, Guid controllingUserId, DateTime startTime, DateTime endTime, bool isPrivate)
+        public Happening(Guid id, string name, string description, string flavor, Guid controllingUserId, DateTime startTime, DateTime endTime, bool isPrivate)
         {
             Id = id;
             AllUsers = new List<HappeningUser>();
-            Update(name, description, controllingUserId, startTime, endTime, isPrivate);
+            Update(name, description, flavor, controllingUserId, startTime, endTime, isPrivate);
         }
 
-        public void Update(string name, string description, Guid controllingUserId, DateTime startTime, DateTime endTime, bool isPrivate)
+        public void Update(string name, string description, string flavor, Guid controllingUserId, DateTime startTime, DateTime endTime, bool isPrivate)
         {
             Name = name;
             Description = description;
+            Flavor = flavor;
             ControllingUserId = controllingUserId;
             StartTime = startTime;
             EndTime = endTime;

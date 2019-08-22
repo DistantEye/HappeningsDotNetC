@@ -145,7 +145,7 @@ namespace HappeningsDotNetC.Services
 
         public override Happening CreateEntity(HappeningDto dto)
         {
-            return new Happening(Guid.NewGuid(), dto.Name, dto.Description, dto.ControllingUserId, dto.StartTime, dto.EndTime, dto.IsPrivate);
+            return new Happening(Guid.NewGuid(), dto.Name, dto.Description, dto.Flavor, dto.ControllingUserId, dto.StartTime, dto.EndTime, dto.IsPrivate) ;
         }
 
         public override HappeningDto DtoFromEntity(Happening entity)
@@ -155,6 +155,7 @@ namespace HappeningsDotNetC.Services
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
+                Flavor = entity.Flavor,
                 ControllingUserId = entity.ControllingUserId,
                 ControllingUser = entity.ControllingUser == null ? null : entity.ControllingUser.Name,
                 StartTime = entity.StartTime,
@@ -181,7 +182,7 @@ namespace HappeningsDotNetC.Services
 
         protected override void UpdateEntity(Happening entity, HappeningDto dto)
         {
-            entity.Update(dto.Name, dto.Description, dto.ControllingUserId, dto.StartTime, dto.EndTime, dto.IsPrivate);
+            entity.Update(dto.Name, dto.Description, dto.Flavor, dto.ControllingUserId, dto.StartTime, dto.EndTime, dto.IsPrivate);
         }
 
         public IEnumerable<InvitationDto> GetHappeningMembership(Guid? happeningId = null)

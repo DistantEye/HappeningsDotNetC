@@ -55,7 +55,7 @@
             @foreach (var dto in subList)
             {
                 <a href="@Url.Action("View/"+dto.Id.ToString(),"Happening")">
-                    @dto.Name : @dto.StartTime.ToString("MMMM dd, yyyy hh:mm tt")
+                    <div class="findicator" style="background-color:#@dto.Flavor"></div> @dto.Name : @dto.StartTime.ToString("MMM dd, yyyy hh:mm tt")
                 </a><br />
             }
 
@@ -81,3 +81,14 @@
 }
 
 </div>
+
+<style type="text/css">
+    .findicator {
+        position: relative;
+        width: 1em;
+        height: 1em;
+        background-color: white;
+        border: 1px solid #000000;
+        display: inline-block;
+    }
+</style>

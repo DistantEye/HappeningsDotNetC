@@ -1,5 +1,5 @@
 ﻿@model HappeningsDotNetC.Dtos.EntityDtos.HappeningDto
-@{ 
+@{
     var userDropDownList = new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value");
 }
 
@@ -19,7 +19,10 @@
             <div class="tableCell">Desc: </div>
             <div class="tableCell">@Html.EditorFor(model => model.Description)</div>
         </div>
-
+        <div class="tableRow">
+            <div class="tableCell">Event Color: </div>
+            <div class="tableCell">#@Html.EditorFor(model => model.Flavor)</div>
+        </div>
         <div class="tableRow">
             <div class="tableCell">Organizer: </div>
             <div class="tableCell"> @Html.DropDownListFor(model => model.ControllingUserId, userDropDownList)</div>
@@ -66,11 +69,12 @@
     <form asp-controller="Happening" asp-action="AddHappeningMember" method="post">
         @Html.Hidden("HappeningId", Model.Id)
         @Html.DropDownList("UserId", new SelectList((Dictionary<Guid, string>)ViewData["UserDropDown"], "Key", "Value"))
-        <button type="submit">Add User</button>        
+        <button type="submit">Add User</button>
     </form>
 }
 
-<br/><br/>
+<br />
+<br />
 
 @if (@ViewData["Referer"] != null && !string.IsNullOrWhiteSpace((string)@ViewData["Referer"]))
 {
@@ -80,3 +84,4 @@ else
 {
     <a asp-area="" asp-controller="Calendar" asp-action="Index">Return to Calendar</a>
 }
+
