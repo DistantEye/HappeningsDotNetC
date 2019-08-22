@@ -155,6 +155,7 @@ namespace HappeningsDotNetC.Services
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
+                Flavor = entity.Flavor,
                 ControllingUserId = entity.ControllingUserId,
                 ControllingUser = entity.ControllingUser == null ? null : entity.ControllingUser.Name,
                 StartTime = entity.StartTime,
