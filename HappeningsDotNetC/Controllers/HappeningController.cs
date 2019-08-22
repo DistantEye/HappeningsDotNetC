@@ -51,7 +51,7 @@ namespace HappeningsDotNetC.Controllers
             // get what little Happening data we need to the View
             ViewData["HappeningName"] = happening.Name;
             ViewData["HappeningDesc"] = happening.Description;
-            ViewData["HappeningColor"] = happening.Flavor;
+            ViewData["HappeningFlavor"] = happening.Flavor;
             ViewData["HappeningControllingUser"] = happening.ControllingUser;
             ViewData["HappeningStart"] = happening.StartTime;
             ViewData["HappeningEnd"] = happening.EndTime;
